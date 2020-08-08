@@ -1,0 +1,22 @@
+package com.alun.indexcreator;
+
+import com.alun.common.models.DictEntry;
+
+import java.util.List;
+
+public class Main {
+    /**
+     * designed to work with my copy of JMdict
+     * retrieved Sat 18 Jul 10:20:12 BST 2020
+     * Rev 1.09
+     * md5sum 31f5a9b3bf2923619a1900bf88719ef5  JMdict.gz
+     * sha256sum c72c29e3320a2dbed157eb2c6251b0a3e3a8fefff9f8ff9d4876808eff505165  JMdict.gz
+     * @param args path to JMdict.xml
+     */
+    public static void main(String[] args) {
+        final String pathJmDictXml = args[0];
+        new DTDValidator().throwIfDtdInvalid(pathJmDictXml);
+        final List<DictEntry> entries = new JMDictParser().run(pathJmDictXml);
+        System.out.println("Done");
+    }
+}

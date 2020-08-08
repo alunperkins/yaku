@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Yaku</string>
+    <string name="search_btn_from_japanese">From Japanese</string>
+    <string name="search_btn_from_english">From English</string>
+    <string name="search_hint">Enter Kana/Romaji/English</string>
+    <string name="search_btn_from_japanese_deinflecting">From Japanese deinflecting</string>
+    <string name="match_mode_any">any</string>
+    <string name="match_mode_exact">exact</string>
+    <string name="match_mode_starts_with">starts with</string>
+    <string name="match_mode_ends_with">ends with</string>
+    <string name="search_target_dictionary">Dictionary</string>
+    <string name="search_target_examples">Examples</string>
+    <string name="x">X</string>
+    <string name="recently_viewed">Recently viewed</string>
+</resources>
