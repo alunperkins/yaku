@@ -34,8 +34,13 @@ public class Main {
      */
     public static void main(String[] args) {
         final String pathJmDictXml = args[0];
+        final String pathIndexDir = args[1];
+
         new DTDValidator().throwIfDtdInvalid(pathJmDictXml);
         final List<DictEntry> entries = new JMDictParser().run(pathJmDictXml);
+
+        new IndexCreator().run(entries, pathIndexDir);
+
         System.out.println("Done");
     }
 }
