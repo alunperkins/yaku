@@ -19,7 +19,7 @@
  */
 package com.alun.common.models
 
-enum class Lang(val s: String) {
+enum class Lang(val threeLetterCode: String) {
     AFR("afr"),
     AIN("ain"),
     ALG("alg"),
@@ -88,7 +88,7 @@ enum class Lang(val s: String) {
     ;
 
     companion object {
-        private val mapping = values().associateBy(Lang::s)
+        private val mapping = values().associateBy(Lang::threeLetterCode)
         fun fromStr(s: String) = mapping[s] ?: error("Look up failed for \"$s\" in Lang")
     }
 }

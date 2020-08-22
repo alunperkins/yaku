@@ -26,7 +26,7 @@ import org.junit.Test
 
 internal class DictEntryTest {
     @Test
-    fun serialization() {
+    fun shouldSerializeAndDeserialize() {
         val original = DictEntry(
             1,
             listOf(
