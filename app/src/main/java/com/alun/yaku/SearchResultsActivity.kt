@@ -48,7 +48,7 @@ class SearchResultsActivity : AppCompatActivity() {
                     .commit()
             }
         } else {
-//            TODO("load saved instance state")
+            TODO("load saved instance state")
         }
     }
 

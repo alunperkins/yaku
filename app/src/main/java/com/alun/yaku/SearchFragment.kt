@@ -52,14 +52,14 @@ class SearchFragment : Fragment() {
 
         searchViewModel = ViewModelProvider(requireActivity()).get(SearchViewModel::class.java)
 
-        search_btn_from_english.setOnClickListener { view -> onClickSearchFromEnglish(view) }
-        search_btn_from_japanese.setOnClickListener { view -> onClickSearchFromJapanese(view) }
-        search_btn_from_japanese_definflecting.setOnClickListener { view ->
+        search_btn_from_english.setOnClickListener { vw -> onClickSearchFromEnglish(vw) }
+        search_btn_from_japanese.setOnClickListener { vw -> onClickSearchFromJapanese(vw) }
+        search_btn_from_japanese_definflecting.setOnClickListener { vw ->
             onClickSearchFromJapaneseDeinflecting(
-                view
+                vw
             )
         }
-        search_src_text_clear.setOnClickListener { view -> onClickClearSearchString(view) }
+        search_src_text_clear.setOnClickListener { vw -> onClickClearSearchString(vw) }
     }
 
     fun onClickClearSearchString(view: View) {

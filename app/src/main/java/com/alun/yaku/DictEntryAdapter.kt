@@ -47,7 +47,7 @@ class DictEntryAdapter(private val words: Array<DictEntry>) :
         holder.view.findViewById<TextView>(R.id.deli_japanese).text = words.get(position).toString()
         holder.view.findViewById<TextView>(R.id.deli_english).text = words.get(position).toString()
         println("CLICK LISTENER TO STRING " + clickListener.toString() + "   " + (clickListener == null))
-        holder.view.setOnClickListener({ it: View? -> clickListener?.onClick(position) })
+        holder.view.setOnClickListener { clickListener?.onClick(position) }
     }
 
     override fun getItemCount(): Int {
