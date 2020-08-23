@@ -22,34 +22,28 @@ package com.alun.yaku
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
+import kotlinx.android.synthetic.main.activity_search_results.*
 
 class SearchResultsActivity : AppCompatActivity() {
-
-    private lateinit var searchViewModel: SearchViewModel
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_results)
 
-        searchViewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
+        val executedSearchViewModel: ExecutedSearchViewModel by viewModels()
 
-        if (savedInstanceState == null) {
-            var searchParams = intent.getParcelableExtra<SearchParams>(INTENT_KEY_SEARCH_PARAMS)
-            if (searchParams != null) {
-                searchViewModel.search.postValue(searchParams)
-
-                val newFrag =
-                    SearchResultsFragment.newInstance()
-                supportFragmentManager
-                    .beginTransaction()
-                    .add(R.id.activity_search_results_frame_layout, newFrag)
-                    .commit()
-            }
-        } else {
-            TODO("load saved instance state")
+        val isFirstCreation = savedInstanceState == null
+        val layoutHasSearchResultsFrame = activity_search_results_frame_layout != null
+        if (isFirstCreation && layoutHasSearchResultsFrame) {
+            val searchParams = intent.getParcelableExtra<SearchParams>(INTENT_KEY_SEARCH_PARAMS)
+            if (searchParams != null) executedSearchViewModel.params.postValue(searchParams)
+            supportFragmentManager
+                .beginTransaction()
+                .add(R.id.activity_search_results_frame_layout, SearchResultsFragment.newInstance())
+                .commit()
         }
+        // TODO load saved instance state
     }
 
     companion object {

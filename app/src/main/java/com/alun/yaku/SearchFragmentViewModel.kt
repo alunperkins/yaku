@@ -19,8 +19,16 @@
  */
 package com.alun.yaku
 
-enum class SearchMode { // TODO rename
-    FROM_ENGLISH,
-    FROM_JAPANESE,
-    FROM_JAPANESE_DEINFLECTED,
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+
+class SearchFragmentViewModel : ViewModel() {
+    val text = MutableLiveData<String>("")
+    val matchMode = MutableLiveData<MatchMode>(MatchMode.ANY)
+    val searchTarget = MutableLiveData<SearchTarget>(SearchTarget.WORDS)
+
+    override fun onCleared() {
+        super.onCleared()
+        println("SearchFragmentViewModel onCleared")
+    }
 }

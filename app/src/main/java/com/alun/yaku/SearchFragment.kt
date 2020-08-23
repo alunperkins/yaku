@@ -23,8 +23,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import kotlinx.android.synthetic.main.fragment_search.*
 
 /**
@@ -33,67 +34,42 @@ import kotlinx.android.synthetic.main.fragment_search.*
  * create an instance of this fragment.
  */
 class SearchFragment : Fragment() {
-    private lateinit var searchViewModel: SearchViewModel
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private val viewModel: SearchFragmentViewModel by activityViewModels()
+    private val executedSearchViewModel: ExecutedSearchViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        searchViewModel = ViewModelProvider(requireActivity()).get(SearchViewModel::class.java)
+        setSearchText(viewModel.text.value!!)
+        setRadioMatchMode(viewModel.matchMode.value!!)
+        setRadioSearchTarget(viewModel.searchTarget.value!!)
+
+        search_src_text.addTextChangedListener { viewModel.text.postValue(getSearchText()) }
+        radio_match_mode.setOnCheckedChangeListener { _, _ -> viewModel.matchMode.postValue(getRadioMatchMode()) }
+        radio_search_target.setOnCheckedChangeListener { _, _ -> viewModel.searchTarget.postValue(getRadioSearchTarget()) }
 
         search_btn_from_english.setOnClickListener { vw -> onClickSearchFromEnglish(vw) }
         search_btn_from_japanese.setOnClickListener { vw -> onClickSearchFromJapanese(vw) }
-        search_btn_from_japanese_definflecting.setOnClickListener { vw ->
-            onClickSearchFromJapaneseDeinflecting(
-                vw
-            )
-        }
-        search_src_text_clear.setOnClickListener { vw -> onClickClearSearchString(vw) }
+        search_btn_from_japanese_definflecting.setOnClickListener { vw -> onClickSearchFromJapaneseDeinflecting(vw) }
+        search_src_text_clear.setOnClickListener { vw -> onClickClearSearchString() }
     }
 
-    fun onClickClearSearchString(view: View) {
-        search_src_text.setText("")
+    private fun getSearchText(): String {
+        return search_src_text.text.toString().trim()
     }
 
-    fun onClickSearchFromEnglish(view: View) {
-        search(SearchMode.FROM_ENGLISH)
+    private fun setSearchText(s: String) {
+        search_src_text.setText(s)
     }
 
-    fun onClickSearchFromJapanese(view: View) {
-        search(SearchMode.FROM_JAPANESE)
-    }
-
-    fun onClickSearchFromJapaneseDeinflecting(view: View) {
-        search(SearchMode.FROM_JAPANESE_DEINFLECTED)
-    }
-
-    private fun search(searchMode: SearchMode) {
-        val searchString = search_src_text.text.toString().trim()
-        if (searchString.isBlank()) {
-            return;
-        }
-        val searchParams = SearchParams(
-            searchString,
-            searchMode,
-            getMatchModeSelection(),
-            getSearchTarget()
-        )
-
-        searchViewModel.search.postValue(searchParams)
-    }
-
-    fun getMatchModeSelection(): MatchMode {
+    private fun getRadioMatchMode(): MatchMode {
         return when (radio_match_mode.checkedRadioButtonId) {
             radio_match_mode_any.id -> MatchMode.ANY
             radio_match_mode_exact.id -> MatchMode.EXACT
@@ -103,12 +79,52 @@ class SearchFragment : Fragment() {
         }
     }
 
-    fun getSearchTarget(): SearchTarget {
+    private fun setRadioMatchMode(matchMode: MatchMode) {
+        radio_match_mode_any.isChecked = matchMode == MatchMode.ANY
+        radio_match_mode_starts_with.isChecked = matchMode == MatchMode.STARTS_WITH
+        radio_match_mode_ends_with.isChecked = matchMode == MatchMode.ENDS_WITH
+        radio_match_mode_exact.isChecked = matchMode == MatchMode.EXACT
+    }
+
+    private fun getRadioSearchTarget(): SearchTarget {
         return when (radio_search_target.checkedRadioButtonId) {
             radio_search_target_dict.id -> SearchTarget.WORDS
             radio_search_target_examples.id -> SearchTarget.EXAMPLES
             else -> error("Unrecognised search target")
         }
+    }
+
+    private fun setRadioSearchTarget(searchTarget: SearchTarget) {
+        radio_search_target_dict.isChecked = searchTarget == SearchTarget.WORDS
+        radio_search_target_examples.isChecked = searchTarget == SearchTarget.EXAMPLES
+    }
+
+    private fun onClickClearSearchString() {
+        search_src_text.setText("")
+    }
+
+    private fun onClickSearchFromEnglish(view: View) {
+        search(SearchMode.FROM_ENGLISH)
+    }
+
+    private fun onClickSearchFromJapanese(view: View) {
+        search(SearchMode.FROM_JAPANESE)
+    }
+
+    private fun onClickSearchFromJapaneseDeinflecting(view: View) {
+        search(SearchMode.FROM_JAPANESE_DEINFLECTED)
+    }
+
+    private fun search(searchMode: SearchMode) {
+        if (viewModel.text.value.isNullOrBlank()) return
+        executedSearchViewModel.params.postValue(
+            SearchParams(
+                viewModel.text.value!!,
+                searchMode,
+                viewModel.matchMode.value!!,
+                viewModel.searchTarget.value!!
+            )
+        )
     }
 
     companion object {

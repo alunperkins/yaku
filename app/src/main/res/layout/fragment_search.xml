@@ -96,7 +96,6 @@
                     android:id="@+id/radio_match_mode_any"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checked="true"
                     android:text="@string/match_mode_any" />
 
                 <RadioButton
@@ -128,7 +127,6 @@
                     android:id="@+id/radio_search_target_dict"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checked="true"
                     android:text="@string/search_target_dictionary" />
 
                 <RadioButton

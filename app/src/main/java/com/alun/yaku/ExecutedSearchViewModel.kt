@@ -22,6 +22,11 @@ package com.alun.yaku
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class SearchViewModel : ViewModel() {
-    val search = MutableLiveData<SearchParams>()
+class ExecutedSearchViewModel : ViewModel() {
+    val params = MutableLiveData<SearchParams>(null)
+
+    override fun onCleared() {
+        super.onCleared()
+        println("ExecutedSearchViewModel onCleared")
+    }
 }
