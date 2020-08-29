@@ -22,6 +22,7 @@ package com.alun.yaku
 import android.content.Context
 import com.alun.common.models.DictEntry
 import com.alun.common.models.Lang
+import com.alun.yaku.models.SearchParams
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json

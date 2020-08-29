@@ -17,13 +17,17 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.yaku
+package com.alun.yaku.viewmodels
 
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alun.common.models.DictEntry
+import com.alun.yaku.SearchService
+import com.alun.yaku.SearchServiceImplLucene
+import com.alun.yaku.models.Result
+import com.alun.yaku.models.SearchParams
 import kotlinx.coroutines.launch
 
 class SearchResultsViewModel() : ViewModel() {
@@ -31,7 +35,8 @@ class SearchResultsViewModel() : ViewModel() {
 
     fun search(context: Context?, params: SearchParams) {
         val t1 = System.currentTimeMillis()
-        val searchService: SearchService = SearchServiceImplLucene(context)
+        val searchService: SearchService =
+            SearchServiceImplLucene(context)
         viewModelScope.launch {
             results.postValue(
                 try {
@@ -43,5 +48,14 @@ class SearchResultsViewModel() : ViewModel() {
             println("==== SearchResultsViewModel::search searched in " + (System.currentTimeMillis() - t1) + " wall clock milliseconds")
         }
 
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        println("==== SearchResultsViewModel onCleared")
+    }
+
+    init {
+        println("==== SearchResultsViewModel constructor")
     }
 }

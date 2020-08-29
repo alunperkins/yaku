@@ -17,10 +17,21 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.yaku
+package com.alun.yaku.viewmodels
 
-enum class SearchMode { // TODO rename
-    FROM_ENGLISH,
-    FROM_JAPANESE,
-    FROM_JAPANESE_DEINFLECTED,
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.alun.yaku.models.SearchParams
+
+class ExecutedSearchViewModel : ViewModel() {
+    val params = MutableLiveData<SearchParams>(null)
+
+    override fun onCleared() {
+        super.onCleared()
+        println("==== ExecutedSearchViewModel onCleared")
+    }
+
+    init {
+        println("==== ExecutedSearchViewModel constructor")
+    }
 }

@@ -17,11 +17,9 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.yaku
+package com.alun.yaku.models
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-
-class ExecutedSearchViewModel : ViewModel() {
-    val params = MutableLiveData<SearchParams>(null)
+enum class SearchTarget {
+    WORDS,
+    EXAMPLES,
 }

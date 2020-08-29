@@ -17,9 +17,11 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.yaku
+package com.alun.yaku.models
 
-enum class SearchTarget {
-    WORDS,
-    EXAMPLES,
+enum class MatchMode {
+    ANY,
+    EXACT,
+    STARTS_WITH,
+    ENDS_WITH,
 }

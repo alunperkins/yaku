@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.yaku
+package com.alun.yaku.activities
 
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -25,6 +25,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alun.common.models.DictEntry
+import com.alun.yaku.DictEntryAdapter
+import com.alun.yaku.R
+import com.alun.yaku.fragments.SearchFragment
+import com.alun.yaku.models.SearchParams
+import com.alun.yaku.viewmodels.ExecutedSearchViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() { // TODO extend FragmentActivity directly instead, I think AppCompatActivity is deprecated?
@@ -43,7 +48,10 @@ class MainActivity : AppCompatActivity() { // TODO extend FragmentActivity direc
         if (isFirstCreation && layoutHasSearchFragmentFrame) {
             supportFragmentManager
                 .beginTransaction()
-                .add(R.id.activity_main_search_frame_layout, SearchFragment.newInstance())
+                .add(
+                    R.id.activity_main_search_frame_layout,
+                    SearchFragment.newInstance()
+                )
                 .commit()
         }
 

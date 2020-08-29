@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.yaku
+package com.alun.yaku.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -26,6 +26,13 @@ import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.alun.yaku.R
+import com.alun.yaku.models.MatchMode
+import com.alun.yaku.models.SearchMode
+import com.alun.yaku.models.SearchParams
+import com.alun.yaku.models.SearchTarget
+import com.alun.yaku.viewmodels.ExecutedSearchViewModel
+import com.alun.yaku.viewmodels.SearchFragmentViewModel
 import kotlinx.android.synthetic.main.fragment_search.*
 
 class SearchFragment : Fragment() {

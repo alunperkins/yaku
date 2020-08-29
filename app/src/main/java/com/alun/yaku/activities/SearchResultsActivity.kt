@@ -17,12 +17,15 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.yaku
+package com.alun.yaku.activities
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.alun.yaku.R
+import com.alun.yaku.fragments.SearchResultsFragment
+import com.alun.yaku.models.SearchParams
 import kotlinx.android.synthetic.main.activity_search_results.*
 
 class SearchResultsActivity : AppCompatActivity() { // TODO extend FragmentActivity directly instead, I think AppCompatActivity is deprecated?
@@ -37,7 +40,10 @@ class SearchResultsActivity : AppCompatActivity() { // TODO extend FragmentActiv
             if (searchParams == null) TODO("Handle search params being null?");
             supportFragmentManager
                 .beginTransaction()
-                .add(R.id.activity_search_results_frame_layout, SearchResultsFragment.newInstance(searchParams))
+                .add(
+                    R.id.activity_search_results_frame_layout,
+                    SearchResultsFragment.newInstance(searchParams)
+                )
                 .commit()
         }
         // TODO load saved instance state

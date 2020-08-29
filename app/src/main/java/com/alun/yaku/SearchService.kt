@@ -20,6 +20,7 @@
 package com.alun.yaku
 
 import com.alun.common.models.DictEntry
+import com.alun.yaku.models.SearchParams
 
 interface SearchService {
     suspend fun getResults(params: SearchParams): List<DictEntry>

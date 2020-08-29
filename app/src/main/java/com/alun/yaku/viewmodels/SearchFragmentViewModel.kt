@@ -17,13 +17,20 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.yaku
+package com.alun.yaku.viewmodels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.alun.yaku.models.MatchMode
+import com.alun.yaku.models.SearchTarget
 
 class SearchFragmentViewModel : ViewModel() { // TODO rename to not tie it to a specific fragment
     val text = MutableLiveData<String>("")
     val matchMode = MutableLiveData<MatchMode>(MatchMode.ANY)
     val searchTarget = MutableLiveData<SearchTarget>(SearchTarget.WORDS)
+
+    override fun onCleared() {
+        super.onCleared()
+        println("==== SearchFragmentViewModel onCleared")
+    }
 }

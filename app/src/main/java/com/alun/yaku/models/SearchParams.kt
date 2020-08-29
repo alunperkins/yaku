@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.yaku
+package com.alun.yaku.models
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
