@@ -22,25 +22,22 @@ package com.alun.yaku
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_search_results.*
 
-class SearchResultsActivity : AppCompatActivity() {
+class SearchResultsActivity : AppCompatActivity() { // TODO extend FragmentActivity directly instead, I think AppCompatActivity is deprecated?
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_results)
-
-        val executedSearchViewModel: ExecutedSearchViewModel by viewModels()
 
         val isFirstCreation = savedInstanceState == null
         val layoutHasSearchResultsFrame = activity_search_results_frame_layout != null
         if (isFirstCreation && layoutHasSearchResultsFrame) {
             val searchParams = intent.getParcelableExtra<SearchParams>(INTENT_KEY_SEARCH_PARAMS)
-            if (searchParams != null) executedSearchViewModel.params.postValue(searchParams)
+            if (searchParams == null) TODO("Handle search params being null?");
             supportFragmentManager
                 .beginTransaction()
-                .add(R.id.activity_search_results_frame_layout, SearchResultsFragment.newInstance())
+                .add(R.id.activity_search_results_frame_layout, SearchResultsFragment.newInstance(searchParams))
                 .commit()
         }
         // TODO load saved instance state

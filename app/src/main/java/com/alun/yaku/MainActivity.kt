@@ -27,9 +27,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.alun.common.models.DictEntry
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() { // TODO extend FragmentActivity directly instead, I think AppCompatActivity is deprecated?
     private lateinit var recentlyViewedListViewAdapter: DictEntryAdapter
     private lateinit var recentlyViewedListViewManager: LinearLayoutManager
+    private val executedSearchViewModel: ExecutedSearchViewModel by viewModels()
 
     val words: Array<DictEntry> = arrayOf()
 
@@ -47,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (savedInstanceState == null) {
-            println("MainActivity : onCreate : savedInstanceState is null")
+            println("==== MainActivity : onCreate : savedInstanceState is null")
         } else {
             println(
                 "MainActivity " +
@@ -56,11 +57,11 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        val executedSearchViewModel: ExecutedSearchViewModel by viewModels()
-        executedSearchViewModel.params.observe(this, Observer { executedSearch ->
-            if (executedSearch == null) return@Observer
-            // conditionally start SearchResultsActivity or replace a fragment depending on if search results fragment holder is in the xml
-            SearchResultsActivity.newInstance(this, executedSearch)
+        executedSearchViewModel.params.observe(this, Observer<SearchParams> { executedSearch: SearchParams? ->
+            if (executedSearch != null) {
+                // TODO conditionally start SearchResultsActivity or replace a fragment depending on if search results fragment holder is in the xml
+                SearchResultsActivity.newInstance(this, executedSearch)
+            }
         })
 
         initRecentlyViewedList()

@@ -22,13 +22,8 @@ package com.alun.yaku
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class SearchFragmentViewModel : ViewModel() {
+class SearchFragmentViewModel : ViewModel() { // TODO rename to not tie it to a specific fragment
     val text = MutableLiveData<String>("")
     val matchMode = MutableLiveData<MatchMode>(MatchMode.ANY)
     val searchTarget = MutableLiveData<SearchTarget>(SearchTarget.WORDS)
-
-    override fun onCleared() {
-        super.onCleared()
-        println("SearchFragmentViewModel onCleared")
-    }
 }

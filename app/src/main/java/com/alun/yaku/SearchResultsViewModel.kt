@@ -19,9 +19,29 @@
  */
 package com.alun.yaku
 
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.alun.common.models.DictEntry
+import kotlinx.coroutines.launch
 
-class ExecutedSearchViewModel : ViewModel() {
-    val params = MutableLiveData<SearchParams>(null)
+class SearchResultsViewModel() : ViewModel() {
+    val results = MutableLiveData<Result<List<DictEntry>>>(null)
+
+    fun search(context: Context?, params: SearchParams) {
+        val t1 = System.currentTimeMillis()
+        val searchService: SearchService = SearchServiceImplLucene(context)
+        viewModelScope.launch {
+            results.postValue(
+                try {
+                    Result.Success(searchService.getResults(params))
+                } catch (e: Exception) {
+                    Result.Error(e)
+                }
+            )
+            println("==== SearchResultsViewModel::search searched in " + (System.currentTimeMillis() - t1) + " wall clock milliseconds")
+        }
+
+    }
 }

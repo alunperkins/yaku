@@ -19,9 +19,8 @@
  */
 package com.alun.yaku
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import com.alun.common.models.DictEntry
 
-class ExecutedSearchViewModel : ViewModel() {
-    val params = MutableLiveData<SearchParams>(null)
+interface SearchService {
+    suspend fun getResults(params: SearchParams): List<DictEntry>
 }

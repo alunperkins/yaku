@@ -46,7 +46,7 @@ class DictEntryAdapter(private val words: Array<DictEntry>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.view.findViewById<TextView>(R.id.deli_japanese).text = words.get(position).toString()
         holder.view.findViewById<TextView>(R.id.deli_english).text = words.get(position).toString()
-        println("CLICK LISTENER TO STRING " + clickListener.toString() + "   " + (clickListener == null))
+        println("==== CLICK LISTENER TO STRING " + clickListener.toString() + "   " + (clickListener == null))
         holder.view.setOnClickListener { clickListener?.onClick(position) }
     }
 
