@@ -99,6 +99,22 @@ public class Main {
                 .sum()
         ));
 
+        System.out.println("======= IS THERE ANY SENSE THAT HAS GLOSSES OF MULTIPLE LANGUAGES? If not it would make more sense to put language at the Sense level =======");
+        entries.forEach(entry -> {
+            entry.getSenses().forEach(sense -> {
+                final List<Gloss> glosses = sense.getGlosses();
+                if (glosses == null) return;
+                if (glosses.size() == 0) {
+                    System.out.println("size zero gloss?!"); // put breakpoint here
+                    return;
+                }
+                final Lang lang = glosses.get(0).getLang();
+                if (glosses.stream().anyMatch(gloss -> gloss.getLang() != lang)) {
+                    System.out.println("Heterogeneous language sense found"); // put breakpoint here
+                }
+            });
+        });
+        // No, in the copy of JMDict I have there is no word with a sense having glosses of different languages, so yes it would make more sense to put language at the sense level
     }
 
     private static void histogram(List<DictEntry> entries, final Function<DictEntry, List<Long>> getKeys) {
