@@ -29,13 +29,13 @@ import com.alun.yaku.DictEntryAdapter
 import com.alun.yaku.R
 import com.alun.yaku.fragments.SearchFragment
 import com.alun.yaku.models.SearchParams
-import com.alun.yaku.viewmodels.ExecutedSearchViewModel
+import com.alun.yaku.viewmodels.SearchViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() { // TODO extend FragmentActivity directly instead, I think AppCompatActivity is deprecated?
     private lateinit var recentlyViewedListViewAdapter: DictEntryAdapter
     private lateinit var recentlyViewedListViewManager: LinearLayoutManager
-    private val executedSearchViewModel: ExecutedSearchViewModel by viewModels()
+    private val searchViewModel: SearchViewModel by viewModels()
 
     val words: Array<DictEntry> = arrayOf()
 
@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() { // TODO extend FragmentActivity direc
             )
         }
 
-        executedSearchViewModel.params.observe(this, Observer<SearchParams> { executedSearch: SearchParams? ->
+        searchViewModel.executedSearch.observe(this, Observer { executedSearch: SearchParams? ->
             if (executedSearch != null) {
                 // TODO conditionally start SearchResultsActivity or replace a fragment depending on if search results fragment holder is in the xml
                 SearchResultsActivity.newInstance(this, executedSearch)

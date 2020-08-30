@@ -22,15 +22,12 @@ package com.alun.yaku.viewmodels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.alun.yaku.models.MatchMode
+import com.alun.yaku.models.SearchParams
 import com.alun.yaku.models.SearchTarget
 
-class SearchFragmentViewModel : ViewModel() { // TODO rename to not tie it to a specific fragment
+class SearchViewModel : ViewModel() {
     val text = MutableLiveData<String>("")
     val matchMode = MutableLiveData<MatchMode>(MatchMode.ANY)
     val searchTarget = MutableLiveData<SearchTarget>(SearchTarget.WORDS)
-
-    override fun onCleared() {
-        super.onCleared()
-        println("==== SearchFragmentViewModel onCleared")
-    }
+    val executedSearch = MutableLiveData<SearchParams?>(null)
 }

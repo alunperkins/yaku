@@ -34,7 +34,6 @@ class SearchResultsViewModel() : ViewModel() {
     val results = MutableLiveData<Result<List<DictEntry>>>(null)
 
     fun search(context: Context?, params: SearchParams) {
-        val t1 = System.currentTimeMillis()
         val searchService: SearchService =
             SearchServiceImplLucene(context)
         viewModelScope.launch {
@@ -45,17 +44,7 @@ class SearchResultsViewModel() : ViewModel() {
                     Result.Error(e)
                 }
             )
-            println("==== SearchResultsViewModel::search searched in " + (System.currentTimeMillis() - t1) + " wall clock milliseconds")
         }
 
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        println("==== SearchResultsViewModel onCleared")
-    }
-
-    init {
-        println("==== SearchResultsViewModel constructor")
     }
 }

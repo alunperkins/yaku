@@ -31,13 +31,11 @@ import com.alun.yaku.models.MatchMode
 import com.alun.yaku.models.SearchMode
 import com.alun.yaku.models.SearchParams
 import com.alun.yaku.models.SearchTarget
-import com.alun.yaku.viewmodels.ExecutedSearchViewModel
-import com.alun.yaku.viewmodels.SearchFragmentViewModel
+import com.alun.yaku.viewmodels.SearchViewModel
 import kotlinx.android.synthetic.main.fragment_search.*
 
 class SearchFragment : Fragment() {
-    private val viewModel: SearchFragmentViewModel by activityViewModels()
-    private val executedSearchViewModel: ExecutedSearchViewModel by activityViewModels()
+    private val searchViewModel: SearchViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,13 +47,13 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setSearchText(viewModel.text.value!!)
-        setRadioMatchMode(viewModel.matchMode.value!!)
-        setRadioSearchTarget(viewModel.searchTarget.value!!)
+        setSearchText(searchViewModel.text.value!!)
+        setRadioMatchMode(searchViewModel.matchMode.value!!)
+        setRadioSearchTarget(searchViewModel.searchTarget.value!!)
 
-        search_src_text.addTextChangedListener { viewModel.text.postValue(getSearchText()) }
-        radio_match_mode.setOnCheckedChangeListener { _, _ -> viewModel.matchMode.postValue(getRadioMatchMode()) }
-        radio_search_target.setOnCheckedChangeListener { _, _ -> viewModel.searchTarget.postValue(getRadioSearchTarget()) }
+        search_src_text.addTextChangedListener { searchViewModel.text.postValue(getSearchText()) }
+        radio_match_mode.setOnCheckedChangeListener { _, _ -> searchViewModel.matchMode.postValue(getRadioMatchMode()) }
+        radio_search_target.setOnCheckedChangeListener { _, _ -> searchViewModel.searchTarget.postValue(getRadioSearchTarget()) }
 
         search_btn_from_english.setOnClickListener { vw -> onClickSearchFromEnglish(vw) }
         search_btn_from_japanese.setOnClickListener { vw -> onClickSearchFromJapanese(vw) }
@@ -118,13 +116,13 @@ class SearchFragment : Fragment() {
     }
 
     private fun search(searchMode: SearchMode) {
-        if (viewModel.text.value.isNullOrBlank()) return
-        executedSearchViewModel.params.postValue(
+        if (searchViewModel.text.value.isNullOrBlank()) return
+        searchViewModel.executedSearch.postValue(
             SearchParams(
-                viewModel.text.value!!,
+                searchViewModel.text.value!!,
                 searchMode,
-                viewModel.matchMode.value!!,
-                viewModel.searchTarget.value!!
+                searchViewModel.matchMode.value!!,
+                searchViewModel.searchTarget.value!!
             )
         )
     }

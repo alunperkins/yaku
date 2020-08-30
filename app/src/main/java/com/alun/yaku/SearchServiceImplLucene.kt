@@ -47,7 +47,6 @@ class SearchServiceImplLucene(context: Context?) : SearchService {
 
     override suspend fun getResults(params: SearchParams): List<DictEntry> {
         return withContext(Dispatchers.IO) {
-            val t1 = System.currentTimeMillis()
             if (searcher == null) TODO("handle case where searcher is null because context was null")
 
             val q: Query = TermQuery(Term(Lang.ENG.threeLetterCode, params.text))
@@ -61,7 +60,6 @@ class SearchServiceImplLucene(context: Context?) : SearchService {
                 val deserialized = json.parse(serializer, serialized)
                 deserialized
             }
-            println("==== SearchServiceImplLucene::getResults::withContext Searched in " + (System.currentTimeMillis() - t1) + " wall clock milliseconds")
             retval
         }
     }
