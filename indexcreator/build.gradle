@@ -19,8 +19,8 @@ dependencies {
     implementation "org.apache.lucene:lucene-core:8.6.0"
 }
 
-sourceCompatibility = "1.7"
-targetCompatibility = "1.7"
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
 
 compileKotlin {
     kotlinOptions {
