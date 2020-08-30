@@ -31,11 +31,10 @@ import com.alun.yaku.models.SearchParams
 import kotlinx.coroutines.launch
 
 class SearchResultsViewModel() : ViewModel() {
-    val results = MutableLiveData<Result<List<DictEntry>>>(null)
+    val results = MutableLiveData<Result<List<DictEntry>>?>(null)
 
     fun search(context: Context?, params: SearchParams) {
-        val searchService: SearchService =
-            SearchServiceImplLucene(context)
+        val searchService: SearchService = SearchServiceImplLucene(context)
         viewModelScope.launch {
             results.postValue(
                 try {

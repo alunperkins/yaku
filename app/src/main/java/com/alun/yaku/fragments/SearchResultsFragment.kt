@@ -26,7 +26,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.alun.common.models.DictEntry
+import com.alun.yaku.DictEntryAdapter
 import com.alun.yaku.R
 import com.alun.yaku.models.Result
 import com.alun.yaku.models.SearchParams
@@ -35,6 +37,7 @@ import kotlinx.android.synthetic.main.fragment_search_results.*
 
 class SearchResultsFragment : Fragment() {
     private val searchResultsViewModel: SearchResultsViewModel by activityViewModels()
+    private val resultsManager: LinearLayoutManager = LinearLayoutManager(context)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,6 +49,11 @@ class SearchResultsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        search_results.apply {
+            layoutManager = resultsManager
+            adapter = DictEntryAdapter(listOf())
+        }
+
         val searchParams: SearchParams? = arguments?.getParcelable<SearchParams?>(ARGS_KEY_SEARCH_PARAMS)
 
 //        temp_text_id.text = searchParams?.run {
@@ -54,19 +62,33 @@ class SearchResultsFragment : Fragment() {
 
 // useful for printing exceptions: `e.message + '\n' + StringWriter().also { e.printStackTrace(PrintWriter(it)) }.toString()`
 
-        searchParams?.let {
-            with(searchResultsViewModel) {
-                search(context, searchParams)
-                results.observe(
-                    viewLifecycleOwner,
-                    Observer<Result<List<DictEntry>>> { entries: Result<List<DictEntry>>? ->
-                        temp_text_id.text = when (entries) {
-                            is Result.Success -> entries.data.map { de -> de.kanas.map { k -> k.str }.joinToString(separator = "\n") }.joinToString(separator = "\n")
-                            is Result.Error -> "there was an error" + entries.exception.localizedMessage
-                            else -> "Loading"
+        searchParams?.let { sp ->
+            searchResultsViewModel.results.observe(
+                viewLifecycleOwner,
+                Observer { entries: Result<List<DictEntry>>? ->
+                    when (entries) {
+                        is Result.Success -> {
+                            search_results_status_text.text = "" + entries.data.size + " results for \"" + sp.text + "\""
+
+                            val resultsAdapter = DictEntryAdapter(entries.data).apply {
+                                clickListener = object : DictEntryAdapter.ClickListener {
+                                    override fun onClick(position: Int) {
+                                        println("SEARCH RESULTS FRAGMENT CLICK LISTENER " + position + "  " + entries.data.get(position).toString())
+                                    }
+                                }
+                            }
+                            search_results.swapAdapter(resultsAdapter, true)
                         }
-                    })
-            }
+                        is Result.Error -> {
+                            search_results_status_text.text = "There was an error: " + entries.exception.localizedMessage
+                        }
+                        null -> {
+                            searchResultsViewModel.search(context, searchParams)
+                            search_results_status_text.text = "Loading results for \"" + sp.text + "\""
+                        }
+                    }
+                }
+            )
         }
     }
 

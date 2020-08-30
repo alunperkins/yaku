@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() { // TODO extend FragmentActivity direc
     private lateinit var recentlyViewedListViewManager: LinearLayoutManager
     private val searchViewModel: SearchViewModel by viewModels()
 
-    val words: Array<DictEntry> = arrayOf()
+    val words: List<DictEntry> = listOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,10 +48,7 @@ class MainActivity : AppCompatActivity() { // TODO extend FragmentActivity direc
         if (isFirstCreation && layoutHasSearchFragmentFrame) {
             supportFragmentManager
                 .beginTransaction()
-                .add(
-                    R.id.activity_main_search_frame_layout,
-                    SearchFragment.newInstance()
-                )
+                .add(R.id.activity_main_search_frame_layout, SearchFragment.newInstance())
                 .commit()
         }
 
