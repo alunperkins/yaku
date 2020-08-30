@@ -20,13 +20,16 @@
 package com.alun.indexcreator;
 
 import com.alun.common.models.DictEntry;
+import com.alun.common.models.Gloss;
 import com.alun.common.models.Kanji;
 import com.alun.common.models.Lang;
 import com.alun.common.models.Sense;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main {
@@ -56,46 +59,61 @@ public class Main {
     }
 
     private static void analyze(List<DictEntry> entries) {
-        System.out.println("======= KANJIS =======");
+        System.out.println("======= KANJIS PER ENTRY =======");
         histogram(entries, entry -> {
             final List<Kanji> kanjis = entry.getKanjis();
-            return Integer.toUnsignedLong(kanjis == null ? 0 : kanjis.size());
+            return Collections.singletonList(Integer.toUnsignedLong(kanjis == null ? 0 : kanjis.size()));
         });
 
-        System.out.println("======= KANAS =======");
-        histogram(entries, entry -> Integer.toUnsignedLong(entry.getKanas().size()));
+        System.out.println("======= KANAS PER ENTRY =======");
+        histogram(entries, entry -> Collections.singletonList(Integer.toUnsignedLong(entry.getKanas().size())));
 
-        System.out.println("======= ENGLISH SENSES =======");
+        System.out.println("======= ENGLISH SENSES PER ENTRY =======");
         histogram(entries, entry -> {
                     Stream<Sense> englishSenses = entry.getSenses().stream()
                             .filter(sense -> sense.getGlosses() != null)
                             .filter(sense ->
                                     sense.getGlosses().stream().anyMatch(gloss -> gloss.getLang().equals(Lang.ENG))
                             );
-                    return englishSenses.count();
+                    return Collections.singletonList(englishSenses.count());
                 }
         );
 
-        System.out.println("======= TOTAL ENGLISH GLOSSES =======");
+        System.out.println("======= (NON-EMPTY) ENGLISH GLOSSES PER SENSE =======");
         histogram(entries, entry -> entry.getSenses()
+                .stream()
+                .filter(sense -> sense.getGlosses() != null)
+                .map(sense -> sense.getGlosses()
+                        .stream()
+                        .filter(gloss -> gloss.getLang() == Lang.ENG)
+                        .filter(gloss -> !gloss.getStr().isEmpty())
+                        .count()
+                ).collect(Collectors.toList())
+        );
+
+        System.out.println("======= TOTAL ENGLISH GLOSSES PER ENTRY =======");
+        histogram(entries, entry -> Collections.singletonList(entry.getSenses()
                 .stream()
                 .filter(stream -> stream.getGlosses() != null)
                 .mapToLong(sense -> sense.getGlosses().stream().filter(gloss -> gloss.getLang() == Lang.ENG).count())
                 .sum()
-        );
+        ));
+
     }
 
-    private static void histogram(List<DictEntry> entries, final Function<DictEntry, Long> getKey) {
+    private static void histogram(List<DictEntry> entries, final Function<DictEntry, List<Long>> getKeys) {
         final TreeMap<Long, Long> counts = new TreeMap<>();
         entries.forEach(entry -> {
-            final long key = getKey.apply(entry);
-            if (!counts.containsKey(key)) {
-                counts.put(key, 0L);
-            }
-//            if (key > 19) {
-//                System.out.println(entry.toString());
-//            }
-            counts.put(key, counts.get(key) + 1);
+            final List<Long> keys = getKeys.apply(entry);
+            keys.forEach(key -> {
+                if (!counts.containsKey(key)) {
+                    counts.put(key, 0L);
+                }
+//                if (key > 19) {
+//                    System.out.println(entry.toString());
+//                }
+                counts.put(key, counts.get(key) + 1);
+            });
         });
         final long total = counts.values().stream().reduce(0L, Long::sum);
         counts.keySet().forEach(key -> {
