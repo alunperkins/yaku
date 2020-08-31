@@ -25,6 +25,7 @@ import com.alun.common.models.Kanji;
 import com.alun.common.models.Lang;
 import com.alun.common.models.Sense;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
@@ -59,6 +60,8 @@ public class Main {
     }
 
     private static void analyze(List<DictEntry> entries) {
+        System.out.println("Number of entries: " + entries.size());
+
         System.out.println("======= KANJIS PER ENTRY =======");
         histogram(entries, entry -> {
             final List<Kanji> kanjis = entry.getKanjis();
@@ -111,12 +114,21 @@ public class Main {
             });
         });
         // No, in the copy of JMDict I have there is no word with a sense having glosses of different languages, so yes it would make more sense to put language at the sense level
+
+        System.out.println("======= TRANSLATED JAPANESE WORDS PER LANGUAGE - would probably have to be above 40,000 or so to be useful as a dictionary for that language =======");
+        histogram(entries, entry -> new ArrayList<>(
+                        entry.getSenses()
+                                .stream()
+                                .map(sense -> sense.getGlosses().get(0).getLang()) // the language of each sense (assuming glosses of a single sense are homogeneous in lang)
+                                .collect(Collectors.toSet()) // remove duplicates to get a list of languages supported by this entry
+                )
+        );
     }
 
-    private static void histogram(List<DictEntry> entries, final Function<DictEntry, List<Long>> getKeys) {
-        final TreeMap<Long, Long> counts = new TreeMap<>();
+    private static <T extends Comparable<T>> void histogram(List<DictEntry> entries, final Function<DictEntry, List<T>> getKeys) {
+        final TreeMap<T, Long> counts = new TreeMap<>();
         entries.forEach(entry -> {
-            final List<Long> keys = getKeys.apply(entry);
+            final List<T> keys = getKeys.apply(entry);
             keys.forEach(key -> {
                 if (!counts.containsKey(key)) {
                     counts.put(key, 0L);
