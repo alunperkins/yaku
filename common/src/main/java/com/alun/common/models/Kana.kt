@@ -23,9 +23,21 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Kana(
+    /**
+     * non-empty string
+     */
     val str: String,
+    /**
+     * null or non-empty list
+     */
     val infos: List<ReadingInfo>?,
+    /**
+     * null or non-empty list
+     */
     val priorities: List<Priority>?,
+    /**
+     * null or non-empty list
+     */
     val onlyForKanjis: List<String>?,
     val noKanji: Boolean?
 )

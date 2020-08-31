@@ -23,7 +23,16 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Kanji(
+    /**
+     * non-empty string
+     */
     val str: String,
+    /**
+     * null or non-empty list
+     */
     val infos: List<KanjiInfo>?,
+    /**
+     * null or non-empty list
+     */
     val priorities: List<Priority>?
 )

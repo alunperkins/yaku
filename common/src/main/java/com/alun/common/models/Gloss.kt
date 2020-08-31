@@ -23,6 +23,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Gloss(
+    /**
+     * non-empty string
+     */
     val str: String,
     val lang: Lang,
     val type: GlossType?

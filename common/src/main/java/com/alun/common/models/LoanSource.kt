@@ -24,6 +24,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class LoanSource(
     /**
+     * TODO clarify this
      * not sure what it means for the loan source text to be null (= the loan source being an empty tag)
      * there are 1816 (!) such no-text loan sources
      */

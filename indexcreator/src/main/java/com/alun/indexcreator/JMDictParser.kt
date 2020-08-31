@@ -22,14 +22,73 @@ package com.alun.indexcreator
 import com.alun.common.models.*
 import javax.xml.parsers.SAXParserFactory
 
+fun DictEntry.validateThatAllNonNullMembersAreNonEmpty() {
+    if (kanjis != null && kanjis!!.isEmpty()) throw Error("non-null member should be non-empty")
+    if (kanas.isEmpty()) throw Error("non-null member should be non-empty")
+    if (senses.isEmpty()) throw Error("non-null member should be non-empty")
+}
+
+fun Gloss.validateThatAllNonNullMembersAreNonEmpty() {
+    if (str.isEmpty()) throw Error("non-null member should be non-empty")
+}
+
+fun Kana.validateThatAllNonNullMembersAreNonEmpty() {
+    if (str.isEmpty()) throw Error("non-null member should be non-empty")
+    if (infos != null && infos!!.isEmpty()) throw Error("non-null member should be non-empty")
+    if (priorities != null && priorities!!.isEmpty()) throw Error("non-null member should be non-empty")
+    if (onlyForKanjis != null && onlyForKanjis!!.isEmpty()) throw Error("non-null member should be non-empty")
+    if (str.isEmpty()) throw Error("non-null member should be non-empty")
+}
+
+fun Kanji.validateThatAllNonNullMembersAreNonEmpty() {
+    if (str.isEmpty()) throw Error("non-null member should be non-empty")
+    if (infos != null && infos!!.isEmpty()) throw Error("non-null member should be non-empty")
+    if (priorities != null && priorities!!.isEmpty()) throw Error("non-null member should be non-empty")
+}
+
+fun LoanSource.validateThatAllNonNullMembersAreNonEmpty() {
+    if (str != null && str!!.isEmpty()) throw Error("non-null member should be non-empty")
+}
+
+fun Sense.validateThatAllNonNullMembersAreNonEmpty() {
+    if (stagks != null && stagks!!.isEmpty()) throw Error("non-null member should be non-empty")
+    if (stagrs != null && stagrs!!.isEmpty()) throw Error("non-null member should be non-empty")
+    if (pos != null && pos!!.isEmpty()) throw Error("non-null member should be non-empty")
+    if (xrefs != null && xrefs!!.isEmpty()) throw Error("non-null member should be non-empty")
+    if (antonyms != null && antonyms!!.isEmpty()) throw Error("non-null member should be non-empty")
+    if (fields != null && fields!!.isEmpty()) throw Error("non-null member should be non-empty")
+    if (miscs != null && miscs!!.isEmpty()) throw Error("non-null member should be non-empty")
+    if (infos != null && infos!!.isEmpty()) throw Error("non-null member should be non-empty")
+    if (loanSource != null && loanSource!!.isEmpty()) throw Error("non-null member should be non-empty")
+    if (dialect != null && dialect!!.isEmpty()) throw Error("non-null member should be non-empty")
+    if (glosses.isEmpty()) throw Error("non-null member should be non-empty")
+}
+
 class JMDictParser {
     fun run(path: String): List<DictEntry> {
         val handler = JMDictHandler()
         SAXParserFactory.newInstance().newSAXParser().parse(path, handler)
 
-        checkSample(handler.entries)
+        val entries = handler.entries
 
-        return handler.entries
+        validateThatAllNonNullMembersAreNonEmpty(entries)
+
+        checkSample(entries)
+
+        return entries
+    }
+
+    private fun validateThatAllNonNullMembersAreNonEmpty(entries: List<DictEntry>) {
+        entries.forEach { entry ->
+            entry.validateThatAllNonNullMembersAreNonEmpty()
+            entry.kanjis?.forEach { kanji -> kanji.validateThatAllNonNullMembersAreNonEmpty() }
+            entry.kanas.forEach { kana -> kana.validateThatAllNonNullMembersAreNonEmpty() }
+            entry.senses.forEach { sense ->
+                sense.validateThatAllNonNullMembersAreNonEmpty()
+                sense.loanSource?.forEach { ls -> ls.validateThatAllNonNullMembersAreNonEmpty() }
+                sense.glosses.forEach { gloss -> gloss.validateThatAllNonNullMembersAreNonEmpty() }
+            }
+        }
     }
 
     private fun checkSample(entries: List<DictEntry>) {

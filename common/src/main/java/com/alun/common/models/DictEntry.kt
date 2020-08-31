@@ -24,8 +24,16 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DictEntry(
     val id: Int, // ent_seq
+    /**
+     * null or non-empty list
+     */
     val kanjis: List<Kanji>?,
+    /**
+     * non-empty list
+     */
     val kanas: List<Kana>,
+    /**
+     * non-empty list
+     */
     val senses: List<Sense>
 )
-

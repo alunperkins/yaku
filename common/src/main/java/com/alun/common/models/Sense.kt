@@ -23,18 +23,53 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Sense(
-    val stagks: List<String>?, // These elements, if present, indicate that the sense is restricted to the lexeme represented by the keb and/or reb.
-    val stagrs: List<String>?, // These elements, if present, indicate that the sense is restricted to the lexeme represented by the keb and/or reb.
+    /**
+     * These elements, if present, indicate that the sense is restricted to the lexeme represented by the keb and/or reb.
+     * null or non-empty list
+     */
+    val stagks: List<String>?,
+    /**
+     * These elements, if present, indicate that the sense is restricted to the lexeme represented by the keb and/or reb.
+     * null or non-empty list
+     */
+    val stagrs: List<String>?,
     /**
      * part of speech
+     * null or non-empty list
      */
     val pos: List<POS>?,
+    /**
+     * null or non-empty list
+     */
     val xrefs: List<String>?,
-    val antonyms: List<String>?, // most "ant" entries have in-band separator characters "・", e.g. "<ant>難しい・むずかしい・1</ant>" but I don't know what this format is
+    /**
+     * antonym string
+     * most "ant" entries have in-band separator characters "・", e.g. "<ant>難しい・むずかしい・1</ant>"
+     * null or non-empty list
+     */
+    val antonyms: List<String>?,
+    /**
+     * null or non-empty list
+     */
     val fields: List<Field>?,
+    /**
+     * null or non-empty list
+     */
     val miscs: List<Misc>?,
+    /**
+     * null or non-empty list
+     */
     val infos: List<String>?,
+    /**
+     * null or non-empty list
+     */
     val loanSource: List<LoanSource>?,
+    /**
+     * null or non-empty list
+     */
     val dialect: List<Dialect>?,
+    /**
+     * non-empty list
+     */
     val glosses: List<Gloss>
 )
