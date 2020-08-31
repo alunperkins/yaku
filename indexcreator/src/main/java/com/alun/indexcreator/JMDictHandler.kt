@@ -26,8 +26,7 @@ import com.alun.indexcreator.models.Tag
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
 
-class JMDictHandler :
-    DefaultHandler()/*default handler is just a template, all its methods have empty bodies*/ {
+class JMDictHandler : DefaultHandler()/*default handler is just a template, all its methods have empty bodies*/ {
 
     val entries = ArrayList<DictEntry>() // TODO publish these reactively, instead of collecting them all?
 
@@ -244,32 +243,36 @@ class JMDictHandler :
                 entryKanaNoKanji = true
             }
             Tag.Sense -> {
-                entrySenses!!.add(
-                    Sense(
-                        entrySenseStagks,
-                        entrySenseStagrs,
-                        entrySensePoss,
-                        entrySenseXrefs,
-                        entrySenseAnts,
-                        entrySenseFields,
-                        entrySenseMiscs,
-                        entrySenseInfos,
-                        entrySenseLsources,
-                        entrySenseDials,
-                        entrySenseGlosses
+                if (entrySenseGlosses.isNullOrEmpty())
+                    println("Warning: $entryId has a sense with no glosses, ignoring that sense") // occurs because JMDict.xml has 6 totally empty sense tags `<sense></sense>` (no glosses and nothing else either)
+                else {
+                    entrySenses!!.add(
+                        Sense(
+                            entrySenseStagks,
+                            entrySenseStagrs,
+                            entrySensePoss,
+                            entrySenseXrefs,
+                            entrySenseAnts,
+                            entrySenseFields,
+                            entrySenseMiscs,
+                            entrySenseInfos,
+                            entrySenseLsources,
+                            entrySenseDials,
+                            entrySenseGlosses!!
+                        )
                     )
-                )
-                entrySenseStagks = null
-                entrySenseStagrs = null
-                entrySensePoss = null
-                entrySenseXrefs = null
-                entrySenseAnts = null
-                entrySenseFields = null
-                entrySenseMiscs = null
-                entrySenseInfos = null
-                entrySenseLsources = null
-                entrySenseDials = null
-                entrySenseGlosses = null
+                    entrySenseStagks = null
+                    entrySenseStagrs = null
+                    entrySensePoss = null
+                    entrySenseXrefs = null
+                    entrySenseAnts = null
+                    entrySenseFields = null
+                    entrySenseMiscs = null
+                    entrySenseInfos = null
+                    entrySenseLsources = null
+                    entrySenseDials = null
+                    entrySenseGlosses = null
+                }
             }
             Tag.SenseTagk -> {
                 entrySenseStagks!!.add(cData!!)
@@ -322,7 +325,8 @@ class JMDictHandler :
                 cData = null
             }
             Tag.SenseGloss -> {
-                if (cData == null) println("Warning: $entryId has a gloss with no text, ignoring")
+                if (cData.isNullOrEmpty())
+                    println("Warning: $entryId has a gloss with no text, ignoring that gloss") // occurs because entry 1422200 has a sense `<sense><gloss xml:lang="spa"></gloss></sense>`
                 else {
                     entrySenseGlosses!!.add(
                         Gloss(

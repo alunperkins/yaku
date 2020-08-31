@@ -31,7 +31,7 @@ class IndexCreator {
                 document.add(TextField("kanji", kana.str, Field.Store.NO))
             }
             entry.senses.forEach { sense ->
-                sense.glosses?.forEach { gloss ->
+                sense.glosses.forEach { gloss ->
                     document.add(TextField(gloss.lang.threeLetterCode, gloss.str, Field.Store.NO))
                 }
             }

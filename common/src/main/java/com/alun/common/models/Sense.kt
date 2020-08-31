@@ -36,5 +36,5 @@ data class Sense(
     val infos: List<String>?,
     val loanSource: List<LoanSource>?,
     val dialect: List<Dialect>?,
-    val glosses: List<Gloss>?
+    val glosses: List<Gloss>
 )

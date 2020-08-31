@@ -24,6 +24,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alun.common.models.DictEntry
+import com.alun.common.models.Lang
 import com.alun.yaku.SearchService
 import com.alun.yaku.SearchServiceImplLucene
 import com.alun.yaku.models.Result
@@ -33,12 +34,15 @@ import kotlinx.coroutines.launch
 class SearchResultsViewModel() : ViewModel() {
     val results = MutableLiveData<Result<List<DictEntry>>?>(null)
 
+    val targetLang = Lang.ENG // TODO use user-selected language, do not hard-code to English
+
     fun search(context: Context?, params: SearchParams) {
         val searchService: SearchService = SearchServiceImplLucene(context)
         viewModelScope.launch {
             results.postValue(
                 try {
-                    Result.Success(searchService.getResults(params))
+                    val matchesForUsersLanguage = searchInTargetLang(searchService, params)
+                    Result.Success(matchesForUsersLanguage)
                 } catch (e: Exception) {
                     Result.Error(e)
                 }
@@ -46,4 +50,23 @@ class SearchResultsViewModel() : ViewModel() {
         }
 
     }
+
+    private suspend fun searchInTargetLang(
+        searchService: SearchService,
+        params: SearchParams
+    ): List<DictEntry> {
+        val matches = searchService.getResults(params)
+        val matchesTrimmedToTargetLang = matches
+            .map { entry ->
+                if (entry.senses.any { sense -> sense.glosses.isNotEmpty() && sense.glosses.any { gloss -> gloss.lang != sense.glosses[0].lang } }) {
+                    println("WARNING: Broken assumption: some sense(s) have glosses heterogeneous in language! Will cause results display to display broken info.")
+                }
+                val senses =
+                    entry.senses.filter { sense -> sense.glosses.any { gloss -> gloss.lang == targetLang } } // ASSUMES that all glosses of a sense have the same lang!
+                DictEntry(entry.id, entry.kanjis, entry.kanas, senses)
+            }
+            .filter { entry -> entry.senses.isNotEmpty() }
+        return matchesTrimmedToTargetLang
+    }
+
 }

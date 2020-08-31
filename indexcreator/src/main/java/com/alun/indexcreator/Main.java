@@ -71,7 +71,6 @@ public class Main {
         System.out.println("======= ENGLISH SENSES PER ENTRY =======");
         histogram(entries, entry -> {
                     Stream<Sense> englishSenses = entry.getSenses().stream()
-                            .filter(sense -> sense.getGlosses() != null)
                             .filter(sense ->
                                     sense.getGlosses().stream().anyMatch(gloss -> gloss.getLang().equals(Lang.ENG))
                             );
@@ -82,7 +81,6 @@ public class Main {
         System.out.println("======= (NON-EMPTY) ENGLISH GLOSSES PER SENSE =======");
         histogram(entries, entry -> entry.getSenses()
                 .stream()
-                .filter(sense -> sense.getGlosses() != null)
                 .map(sense -> sense.getGlosses()
                         .stream()
                         .filter(gloss -> gloss.getLang() == Lang.ENG)
@@ -94,7 +92,6 @@ public class Main {
         System.out.println("======= TOTAL ENGLISH GLOSSES PER ENTRY =======");
         histogram(entries, entry -> Collections.singletonList(entry.getSenses()
                 .stream()
-                .filter(stream -> stream.getGlosses() != null)
                 .mapToLong(sense -> sense.getGlosses().stream().filter(gloss -> gloss.getLang() == Lang.ENG).count())
                 .sum()
         ));
@@ -103,9 +100,8 @@ public class Main {
         entries.forEach(entry -> {
             entry.getSenses().forEach(sense -> {
                 final List<Gloss> glosses = sense.getGlosses();
-                if (glosses == null) return;
                 if (glosses.size() == 0) {
-                    System.out.println("size zero gloss?!"); // put breakpoint here
+                    System.out.println("Size zero gloss - should never happen!"); // put breakpoint here
                     return;
                 }
                 final Lang lang = glosses.get(0).getLang();
