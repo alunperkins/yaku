@@ -16,7 +16,8 @@ dependencies {
     implementation project(path: ':common')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0"
-    implementation "org.apache.lucene:lucene-core:8.6.0"
+    implementation "org.apache.lucene:lucene-core:4.7.2"
+    implementation "org.apache.lucene:lucene-analyzers-common:4.7.2"
 }
 
 sourceCompatibility = "1.8"

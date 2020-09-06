@@ -36,6 +36,9 @@ class SearchResultsViewModel() : ViewModel() {
 
     val targetLang = Lang.ENG // TODO use user-selected language, do not hard-code to English
 
+    /**
+     * gets search results, filtering to the target lang only
+     */
     fun search(context: Context?, params: SearchParams) {
         val searchService: SearchService = SearchServiceImplLucene(context)
         viewModelScope.launch {

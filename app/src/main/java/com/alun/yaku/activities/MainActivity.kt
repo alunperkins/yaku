@@ -32,7 +32,7 @@ import com.alun.yaku.models.SearchParams
 import com.alun.yaku.viewmodels.SearchViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() { // TODO extend FragmentActivity directly instead, I think AppCompatActivity is deprecated?
+class MainActivity : AppCompatActivity() {
     private lateinit var recentlyViewedListViewAdapter: DictEntryAdapter
     private lateinit var recentlyViewedListViewManager: LinearLayoutManager
     private val searchViewModel: SearchViewModel by viewModels()

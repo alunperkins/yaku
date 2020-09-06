@@ -53,7 +53,9 @@ class SearchFragment : Fragment() {
 
         search_src_text.addTextChangedListener { searchViewModel.text.postValue(getSearchText()) }
         radio_match_mode.setOnCheckedChangeListener { _, _ -> searchViewModel.matchMode.postValue(getRadioMatchMode()) }
-        radio_search_target.setOnCheckedChangeListener { _, _ -> searchViewModel.searchTarget.postValue(getRadioSearchTarget()) }
+        radio_search_target.setOnCheckedChangeListener { _, _ ->
+            searchViewModel.searchTarget.postValue(getRadioSearchTarget())
+        }
 
         search_btn_from_english.setOnClickListener { vw -> onClickSearchFromEnglish(vw) }
         search_btn_from_japanese.setOnClickListener { vw -> onClickSearchFromJapanese(vw) }

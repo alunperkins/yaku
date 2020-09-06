@@ -10,14 +10,15 @@ import org.apache.lucene.document.TextField
 import org.apache.lucene.index.IndexWriter
 import org.apache.lucene.index.IndexWriterConfig
 import org.apache.lucene.store.MMapDirectory
+import org.apache.lucene.util.Version
 import java.io.File
 
 class IndexCreator {
     fun run(entries: List<DictEntry>, outputPath: String) {
-        val dir = MMapDirectory(File(outputPath).toPath());
-        val analyzer = StandardAnalyzer();
+        val dir = MMapDirectory(File(outputPath));
+        val analyzer = StandardAnalyzer(Version.LUCENE_47);
 
-        val indexWriterConfig = IndexWriterConfig(analyzer)
+        val indexWriterConfig = IndexWriterConfig(Version.LUCENE_47, analyzer)
         val writer = IndexWriter(dir, indexWriterConfig)
 
         val json = Json(JsonConfiguration.Stable)

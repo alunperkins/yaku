@@ -28,7 +28,7 @@ import com.alun.yaku.fragments.SearchResultsFragment
 import com.alun.yaku.models.SearchParams
 import kotlinx.android.synthetic.main.activity_search_results.*
 
-class SearchResultsActivity : AppCompatActivity() { // TODO extend FragmentActivity directly instead, I think AppCompatActivity is deprecated?
+class SearchResultsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_results)

@@ -56,7 +56,7 @@ class SearchServiceImplLucene(context: Context?) : SearchService {
 
             val retval = hits.map { hit ->
                 val doc = searcher.doc(hit.doc)
-                val serialized = (doc.getField("entry").charSequenceValue as String)
+                val serialized = doc.getField("entry").stringValue()
                 val deserialized = json.parse(serializer, serialized)
                 deserialized
             }
@@ -65,6 +65,6 @@ class SearchServiceImplLucene(context: Context?) : SearchService {
     }
 
     private fun getDirectory(context: Context): Directory {
-        return FSDirectory.open(context.getExternalFilesDir("sampledata")?.toPath())
+        return FSDirectory.open(context.getExternalFilesDir("index_jmdict"))
     }
 }
