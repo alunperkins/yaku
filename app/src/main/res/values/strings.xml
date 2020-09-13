@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
 -->
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Yaku</string>
     <string name="search_btn_from_japanese">From Japanese</string>
     <string name="search_btn_from_english">From English</string>
@@ -31,4 +31,6 @@
     <string name="search_target_examples">Examples</string>
     <string name="x">X</string>
     <string name="recently_viewed">Recently viewed</string>
+    <string name="dict_entry_list_item_kanji_then_kana">%1$s - %2$s</string>
+    <string name="dict_entry_list_item_kana">%1$s</string>
 </resources>
