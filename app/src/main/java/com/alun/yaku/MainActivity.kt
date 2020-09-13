@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.yaku.activities
+package com.alun.yaku
 
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -25,10 +25,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alun.common.models.DictEntry
-import com.alun.yaku.DictEntryAdapter
-import com.alun.yaku.R
 import com.alun.yaku.fragments.SearchFragment
+import com.alun.yaku.fragments.SearchResultsFragment
 import com.alun.yaku.models.SearchParams
+import com.alun.yaku.viewmodels.SearchResultsViewModel
 import com.alun.yaku.viewmodels.SearchViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recentlyViewedListViewAdapter: DictEntryAdapter
     private lateinit var recentlyViewedListViewManager: LinearLayoutManager
     private val searchViewModel: SearchViewModel by viewModels()
+    private val searchResultsViewModel: SearchResultsViewModel by viewModels()
 
     val words: List<DictEntry> = listOf()
 
@@ -43,12 +44,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val isFirstCreation = savedInstanceState == null
-        val layoutHasSearchFragmentFrame = activity_main_search_frame_layout != null
-        if (isFirstCreation && layoutHasSearchFragmentFrame) {
+        val isFirstCreation = savedInstanceState == null // TODO check that this can be relied on
+        if (isFirstCreation) {
             supportFragmentManager
                 .beginTransaction()
-                .add(R.id.activity_main_search_frame_layout, SearchFragment.newInstance())
+                .add(R.id.activity_main_fragment_holder, SearchFragment.newInstance())
                 .commit()
         }
 
@@ -63,9 +63,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         searchViewModel.executedSearch.observe(this, Observer { executedSearch: SearchParams? ->
+            println("executedSearch subscription: $executedSearch")
             if (executedSearch != null) {
-                // TODO conditionally start SearchResultsActivity or replace a fragment depending on if search results fragment holder is in the xml
-                SearchResultsActivity.newInstance(this, executedSearch)
+                searchResultsViewModel.search(this, executedSearch)
+                supportFragmentManager
+                    .beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.activity_main_fragment_holder, SearchResultsFragment.newInstance())
+                    .commit()
+                // TODO conditionally put the fragment in the right of a dual-pane layout depending on if right-pane fragment holder is in the xml
             }
         })
 

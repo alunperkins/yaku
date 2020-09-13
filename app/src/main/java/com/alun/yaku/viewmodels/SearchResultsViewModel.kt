@@ -29,12 +29,13 @@ import com.alun.yaku.SearchService
 import com.alun.yaku.SearchServiceImplLucene
 import com.alun.yaku.models.Result
 import com.alun.yaku.models.SearchParams
+import com.alun.yaku.models.SearchResults
 import kotlinx.coroutines.launch
 
 class SearchResultsViewModel() : ViewModel() {
-    val results = MutableLiveData<Result<List<DictEntry>>?>(null)
+    val results = MutableLiveData<SearchResults?>(null)
 
-    val targetLang = Lang.ENG // TODO use user-selected language, do not hard-code to English
+    private val targetLang = Lang.ENG // TODO use user-selected language, do not hard-code to English
 
     /**
      * gets search results, filtering to the target lang only
@@ -42,14 +43,13 @@ class SearchResultsViewModel() : ViewModel() {
     fun search(context: Context?, params: SearchParams) {
         val searchService: SearchService = SearchServiceImplLucene(context)
         viewModelScope.launch {
-            results.postValue(
-                try {
-                    val matchesForUsersLanguage = searchInTargetLang(searchService, params)
-                    Result.Success(matchesForUsersLanguage)
-                } catch (e: Exception) {
-                    Result.Error(e)
-                }
-            )
+            val searchResult = try {
+                val matchesForUsersLanguage = searchInTargetLang(searchService, params)
+                Result.Success(matchesForUsersLanguage)
+            } catch (e: Exception) {
+                Result.Error(e)
+            }
+            results.postValue(SearchResults(params, searchResult))
         }
 
     }

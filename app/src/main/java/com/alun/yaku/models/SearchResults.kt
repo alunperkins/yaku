@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+/*
     Yaku offline browser of Japanese dictionaries
     Copyright (C) 2020 Alun Perkins
 
@@ -16,16 +16,9 @@
 
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
--->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".activities.SearchResultsActivity">
+ */
+package com.alun.yaku.models
 
-    <FrameLayout
-        android:id="@+id/activity_search_results_frame_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"></FrameLayout>
+import com.alun.common.models.DictEntry
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+data class SearchResults(val query: SearchParams, val result: Result<List<DictEntry>>)

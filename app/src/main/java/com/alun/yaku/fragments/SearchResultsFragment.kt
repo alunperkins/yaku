@@ -27,11 +27,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.alun.common.models.DictEntry
 import com.alun.yaku.DictEntryAdapter
 import com.alun.yaku.R
 import com.alun.yaku.models.Result
-import com.alun.yaku.models.SearchParams
+import com.alun.yaku.models.SearchResults
 import com.alun.yaku.viewmodels.SearchResultsViewModel
 import kotlinx.android.synthetic.main.fragment_search_results.*
 
@@ -54,54 +53,25 @@ class SearchResultsFragment : Fragment() {
             adapter = DictEntryAdapter(listOf())
         }
 
-        val searchParams: SearchParams? = arguments?.getParcelable<SearchParams?>(ARGS_KEY_SEARCH_PARAMS)
-
-//        temp_text_id.text = searchParams?.run {
-//            text + ", " + searchMode + ", " + searchTarget + ", " + matchMode
-//        }
-
-// useful for printing exceptions: `e.message + '\n' + StringWriter().also { e.printStackTrace(PrintWriter(it)) }.toString()`
-
-        searchParams?.let { sp ->
-            searchResultsViewModel.results.observe(
-                viewLifecycleOwner,
-                Observer { entries: Result<List<DictEntry>>? ->
-                    when (entries) {
-                        is Result.Success -> {
-                            search_results_status_text.text = "" + entries.data.size + " results for \"" + sp.text + "\""
-
-                            val resultsAdapter = DictEntryAdapter(entries.data).apply {
-                                clickListener = object : DictEntryAdapter.ClickListener {
-                                    override fun onClick(position: Int) {
-                                        println("SEARCH RESULTS FRAGMENT CLICK LISTENER " + position + "  " + entries.data.get(position).toString())
-                                    }
-                                }
-                            }
-                            search_results.swapAdapter(resultsAdapter, true)
-                        }
-                        is Result.Error -> {
-                            search_results_status_text.text = "There was an error: " + entries.exception.localizedMessage
-                        }
-                        null -> {
-                            searchResultsViewModel.search(context, searchParams)
-                            search_results_status_text.text = "Loading results for \"" + sp.text + "\""
-                        }
-                    }
+        searchResultsViewModel.results.observe(viewLifecycleOwner, Observer { searchResults: SearchResults? ->
+            if (searchResults == null) return@Observer
+            val query = searchResults.query
+            when (val result = searchResults.result) {
+                is Result.Success -> {
+                    val matches = result.data
+                    search_results_status_text.text = resources.getQuantityString(R.plurals.number_of_matches_for_query, matches.size, matches.size, query.text)
+                    val resultsAdapter = DictEntryAdapter(matches)
+                    search_results.swapAdapter(resultsAdapter, true)
                 }
-            )
-        }
+                is Result.Error -> search_results_status_text.text = resources.getString(R.string.error, result.exception.localizedMessage)
+            }
+        })
     }
 
     companion object {
-        private val ARGS_KEY_SEARCH_PARAMS = "args_key_search_params"
-
         @JvmStatic
-        fun newInstance(searchParams: SearchParams): SearchResultsFragment {
-            return SearchResultsFragment().apply {
-                arguments = Bundle().apply {
-                    putParcelable(ARGS_KEY_SEARCH_PARAMS, searchParams)
-                }
-            }
+        fun newInstance(): SearchResultsFragment {
+            return SearchResultsFragment()
         }
     }
 }

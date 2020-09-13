@@ -119,14 +119,13 @@ class SearchFragment : Fragment() {
 
     private fun search(searchMode: SearchMode) {
         if (searchViewModel.text.value.isNullOrBlank()) return
-        searchViewModel.executedSearch.postValue(
-            SearchParams(
-                searchViewModel.text.value!!,
-                searchMode,
-                searchViewModel.matchMode.value!!,
-                searchViewModel.searchTarget.value!!
-            )
+        val searchParams = SearchParams(
+            searchViewModel.text.value!!,
+            searchMode,
+            searchViewModel.matchMode.value!!,
+            searchViewModel.searchTarget.value!!
         )
+        searchViewModel.executedSearch.postValue(searchParams)
     }
 
     companion object {
