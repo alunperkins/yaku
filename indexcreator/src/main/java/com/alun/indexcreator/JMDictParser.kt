@@ -65,15 +65,18 @@ fun Sense.validateThatAllNonNullMembersAreNonEmpty() {
 }
 
 class JMDictParser {
+    private val antonymInBandDelimiter = '・' // TODO move to model class?
+
     fun run(path: String): List<DictEntry> {
         val handler = JMDictHandler()
         SAXParserFactory.newInstance().newSAXParser().parse(path, handler)
 
         val entries = handler.entries
 
-        validateThatAllNonNullMembersAreNonEmpty(entries)
-
         checkSample(entries)
+
+        validateThatAllNonNullMembersAreNonEmpty(entries)
+        checkReferentialIntegrity(entries)
 
         return entries
     }
@@ -88,6 +91,66 @@ class JMDictParser {
                 sense.loanSource?.forEach { ls -> ls.validateThatAllNonNullMembersAreNonEmpty() }
                 sense.glosses.forEach { gloss -> gloss.validateThatAllNonNullMembersAreNonEmpty() }
             }
+        }
+    }
+
+    private fun checkReferentialIntegrity(entries: List<DictEntry>) {
+        entries.forEach { entry ->
+            // check re_restr references
+            val entryKanjiStrings: List<String> = entry.kanjis?.map { it.str } ?: listOf()
+            val entryKanaStrings: List<String> = entry.kanas.map { it.str }
+            entry.kanas
+                .stream()
+                .filter { it.onlyForKanjis != null }
+                .flatMap { it.onlyForKanjis!!.stream() }
+                .forEach { referencedKanji ->
+                    val brokenReference = !entryKanjiStrings.contains(referencedKanji)
+                    if (brokenReference) {
+                        println("Warning: entry ${entry.id} has a broken re_restr ref $referencedKanji")
+                    }
+                }
+
+            // check stagk references
+            entry.senses.stream()
+                .filter { it.stagks != null }
+                .flatMap { it.stagks!!.stream() }
+                .forEach { referencedKanji ->
+                    val brokenReference = !entryKanjiStrings.contains(referencedKanji)
+                    if (brokenReference) {
+                        println("Warning: entry ${entry.id} has broken stagk ref $referencedKanji")
+                    }
+                }
+
+            // check stagr references
+            entry.senses.stream()
+                .filter { it.stagrs != null }
+                .flatMap { it.stagrs!!.stream() }
+                .forEach { referencedKana ->
+                    val brokenReference = !entryKanaStrings.contains(referencedKana)
+                    if (brokenReference) {
+                        println("Warning: entry ${entry.id} has broken stagt ref $referencedKana")
+                    }
+                }
+
+            // check antonym references
+            entry.senses.stream()
+                .filter { it.antonyms != null }
+                .flatMap { it.antonyms!!.stream() }
+                .flatMap { antonymEntryString -> antonymEntryString.split(antonymInBandDelimiter).stream() }
+                .filter { antonymWordOrNum -> antonymWordOrNum.toIntOrNull() == null }
+                .forEach { antonymWord ->
+                    val match = findWordRef(entries, antonymWord)
+                    if (match == null || match.id == entry.id)
+                        println("Warning: entry ${entry.id} has an antonym $antonymWord that doesn't match any other entry")
+                }
+        }
+    }
+
+    private fun findWordRef(entries: List<DictEntry>, wordRef: String): DictEntry? {
+        return entries.find { entry ->
+            entry.kanas.any { it.str == wordRef }
+                    ||
+                    entry.kanjis?.any { it.str == wordRef } ?: false
         }
     }
 

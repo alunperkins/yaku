@@ -27,8 +27,10 @@ import com.alun.common.models.Sense;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -52,14 +54,16 @@ public class Main {
         new DTDValidator().throwIfDtdInvalid(pathJmDictXml);
         final List<DictEntry> entries = new JMDictParser().run(pathJmDictXml);
 
-        new IndexCreator().run(entries, pathIndexDir);
 
-        analyze(entries);
+        printStatistics(entries);
+        analyzeHowReRestrIsUsed(entries);
+
+        new IndexCreator().run(entries, pathIndexDir);
 
         System.out.println("Done");
     }
 
-    private static void analyze(List<DictEntry> entries) {
+    private static void printStatistics(List<DictEntry> entries) {
         System.out.println("Number of entries: " + entries.size());
 
         System.out.println("======= KANJIS PER ENTRY =======");
@@ -100,19 +104,19 @@ public class Main {
         ));
 
         System.out.println("======= IS THERE ANY SENSE THAT HAS GLOSSES OF MULTIPLE LANGUAGES? If not it would make more sense to put language at the Sense level =======");
-        entries.forEach(entry -> {
-            entry.getSenses().forEach(sense -> {
+        for (DictEntry dictEntry : entries) {
+            for (Sense sense : dictEntry.getSenses()) {
                 final List<Gloss> glosses = sense.getGlosses();
                 if (glosses.size() == 0) {
                     System.out.println("Size zero gloss - should never happen!"); // put breakpoint here
-                    return;
+                    continue;
                 }
                 final Lang lang = glosses.get(0).getLang();
                 if (glosses.stream().anyMatch(gloss -> gloss.getLang() != lang)) {
                     System.out.println("Heterogeneous language sense found"); // put breakpoint here
                 }
-            });
-        });
+            }
+        }
         // No, in the copy of JMDict I have there is no word with a sense having glosses of different languages, so yes it would make more sense to put language at the sense level
 
         System.out.println("======= TRANSLATED JAPANESE WORDS PER LANGUAGE - would probably have to be above 40,000 or so to be useful as a dictionary for that language =======");
@@ -125,11 +129,44 @@ public class Main {
         );
     }
 
+    private static void analyzeHowReRestrIsUsed(List<DictEntry> entries) {
+        System.out.println("======= re_restr use =======");
+        AtomicInteger noOfEntriesWithDisjointReRestrCombinations = new AtomicInteger(0);
+        AtomicInteger noOfEntriesWithPartiallyOverlappingReRestrCombinations = new AtomicInteger(0);
+        for (DictEntry entry : entries) {
+            boolean disjoint = true;
+
+            final List<HashSet<String>> reRestrCombinations = entry.getKanas().stream()
+                    .filter(kana -> kana.getOnlyForKanjis() != null)
+                    .map(kana -> new HashSet<>(kana.getOnlyForKanjis()))
+                    .collect(Collectors.toList());
+
+            if (reRestrCombinations.isEmpty()) continue;
+
+            outerLoop:
+            for (int i = 0; i < reRestrCombinations.size() - 1; i++) {
+                final HashSet<String> a = reRestrCombinations.get(i);
+                for (int j = i + 1; j < reRestrCombinations.size(); j++) {
+                    final HashSet<String> b = reRestrCombinations.get(j);
+                    if (!a.equals(b) && a.stream().anyMatch(b::contains)) {
+                        disjoint = false;
+                        System.out.println("Warning: entry " + entry.getId() + " has kanas with re_restr tags that overlap partially but not completely");
+                        break outerLoop;
+                    }
+                }
+            }
+            if (disjoint) noOfEntriesWithDisjointReRestrCombinations.getAndIncrement();
+            else noOfEntriesWithPartiallyOverlappingReRestrCombinations.getAndIncrement();
+        }
+        System.out.println("There are " + noOfEntriesWithDisjointReRestrCombinations + " entries with re_restr combinations that are disjoint, " +
+                "and " + noOfEntriesWithPartiallyOverlappingReRestrCombinations + " entries with re_restr combinations that are partially overlapping");
+    }
+
     private static <T extends Comparable<T>> void histogram(List<DictEntry> entries, final Function<DictEntry, List<T>> getKeys) {
         final TreeMap<T, Long> counts = new TreeMap<>();
-        entries.forEach(entry -> {
+        for (DictEntry entry : entries) {
             final List<T> keys = getKeys.apply(entry);
-            keys.forEach(key -> {
+            for (T key : keys) {
                 if (!counts.containsKey(key)) {
                     counts.put(key, 0L);
                 }
@@ -137,12 +174,12 @@ public class Main {
 //                    System.out.println(entry.toString());
 //                }
                 counts.put(key, counts.get(key) + 1);
-            });
-        });
+            }
+        }
         final long total = counts.values().stream().reduce(0L, Long::sum);
-        counts.keySet().forEach(key -> {
+        for (T key : counts.keySet()) {
             long occurrences = counts.get(key);
             System.out.println(key + "," + occurrences + "," + Math.round(100 * (double) occurrences / (double) total) + "%");
-        });
+        }
     }
 }
