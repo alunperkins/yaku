@@ -29,13 +29,11 @@ import com.alun.yaku.fragments.SearchFragment
 import com.alun.yaku.fragments.SearchResultsFragment
 import com.alun.yaku.models.SearchParams
 import com.alun.yaku.viewmodels.SearchResultsViewModel
-import com.alun.yaku.viewmodels.SearchViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var recentlyViewedListViewAdapter: DictEntryAdapter
     private lateinit var recentlyViewedListViewManager: LinearLayoutManager
-    private val searchViewModel: SearchViewModel by viewModels()
     private val searchResultsViewModel: SearchResultsViewModel by viewModels()
 
     val words: List<DictEntry> = listOf()
@@ -62,10 +60,9 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        searchViewModel.executedSearch.observe(this, Observer { executedSearch: SearchParams? ->
-            println("executedSearch subscription: $executedSearch")
+        searchResultsViewModel.executedSearch.observe(this, Observer { executedSearch: SearchParams? ->
+            println("executedSearch: $executedSearch")
             if (executedSearch != null) {
-                searchResultsViewModel.search(this, executedSearch)
                 supportFragmentManager
                     .beginTransaction()
                     .addToBackStack(null)
@@ -78,7 +75,7 @@ class MainActivity : AppCompatActivity() {
         initRecentlyViewedList()
     }
 
-    private fun initRecentlyViewedList() {
+    private fun initRecentlyViewedList() { // TODO recently viewed list should be a separate fragment (supported by some persistent storage implementation
         recentlyViewedListViewManager = LinearLayoutManager(this)
 
         recentlyViewedListViewAdapter = DictEntryAdapter(words).apply {

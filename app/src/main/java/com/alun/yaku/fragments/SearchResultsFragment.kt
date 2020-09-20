@@ -36,7 +36,6 @@ import kotlinx.android.synthetic.main.fragment_search_results.*
 
 class SearchResultsFragment : Fragment() {
     private val searchResultsViewModel: SearchResultsViewModel by activityViewModels()
-    private val resultsManager: LinearLayoutManager = LinearLayoutManager(context)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,29 +48,43 @@ class SearchResultsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         search_results.apply {
-            layoutManager = resultsManager
+            layoutManager = LinearLayoutManager(context)
             adapter = DictEntryAdapter(listOf())
         }
 
+        search_results_status_text.text = resources.getString(R.string.searching)
         searchResultsViewModel.results.observe(viewLifecycleOwner, Observer { searchResults: SearchResults? ->
             if (searchResults == null) return@Observer
             val query = searchResults.query
             when (val result = searchResults.result) {
                 is Result.Success -> {
                     val matches = result.data
-                    search_results_status_text.text = resources.getQuantityString(R.plurals.number_of_matches_for_query, matches.size, matches.size, query.text)
-                    val resultsAdapter = DictEntryAdapter(matches)
+                    search_results_status_text.text = resources.getQuantityString(
+                        R.plurals.number_of_matches_for_query,
+                        matches.size,
+                        matches.size,
+                        query.text
+                    )
+
+                    val resultsAdapter = DictEntryAdapter(matches).apply {
+                        clickListener = object : DictEntryAdapter.ClickListener {
+                            override fun onClick(position: Int) {
+                                println(
+                                    "SEARCH RESULTS FRAGMENT CLICK LISTENER " + position + "  " + matches[position].toString()
+                                )
+                            }
+                        }
+                    }
                     search_results.swapAdapter(resultsAdapter, true)
                 }
-                is Result.Error -> search_results_status_text.text = resources.getString(R.string.error, result.exception.localizedMessage)
+                is Result.Error -> search_results_status_text.text =
+                    resources.getString(R.string.error, result.exception.localizedMessage)
             }
         })
     }
 
     companion object {
         @JvmStatic
-        fun newInstance(): SearchResultsFragment {
-            return SearchResultsFragment()
-        }
+        fun newInstance() = SearchResultsFragment()
     }
 }

@@ -31,11 +31,13 @@ import com.alun.yaku.models.MatchMode
 import com.alun.yaku.models.SearchMode
 import com.alun.yaku.models.SearchParams
 import com.alun.yaku.models.SearchTarget
-import com.alun.yaku.viewmodels.SearchViewModel
+import com.alun.yaku.viewmodels.SearchFormViewModel
+import com.alun.yaku.viewmodels.SearchResultsViewModel
 import kotlinx.android.synthetic.main.fragment_search.*
 
 class SearchFragment : Fragment() {
-    private val searchViewModel: SearchViewModel by activityViewModels()
+    private val searchFormViewModel: SearchFormViewModel by activityViewModels()
+    private val searchResultsViewModel: SearchResultsViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,14 +49,14 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setSearchText(searchViewModel.text.value!!)
-        setRadioMatchMode(searchViewModel.matchMode.value!!)
-        setRadioSearchTarget(searchViewModel.searchTarget.value!!)
+        setSearchText(searchFormViewModel.text.value!!)
+        setRadioMatchMode(searchFormViewModel.matchMode.value!!)
+        setRadioSearchTarget(searchFormViewModel.searchTarget.value!!)
 
-        search_src_text.addTextChangedListener { searchViewModel.text.postValue(getSearchText()) }
-        radio_match_mode.setOnCheckedChangeListener { _, _ -> searchViewModel.matchMode.postValue(getRadioMatchMode()) }
+        search_src_text.addTextChangedListener { searchFormViewModel.text.postValue(getSearchText()) }
+        radio_match_mode.setOnCheckedChangeListener { _, _ -> searchFormViewModel.matchMode.postValue(getRadioMatchMode()) }
         radio_search_target.setOnCheckedChangeListener { _, _ ->
-            searchViewModel.searchTarget.postValue(getRadioSearchTarget())
+            searchFormViewModel.searchTarget.postValue(getRadioSearchTarget())
         }
 
         search_btn_from_english.setOnClickListener { vw -> onClickSearchFromEnglish(vw) }
@@ -118,14 +120,14 @@ class SearchFragment : Fragment() {
     }
 
     private fun search(searchMode: SearchMode) {
-        if (searchViewModel.text.value.isNullOrBlank()) return
+        if (searchFormViewModel.text.value.isNullOrBlank()) return
         val searchParams = SearchParams(
-            searchViewModel.text.value!!,
+            searchFormViewModel.text.value!!,
             searchMode,
-            searchViewModel.matchMode.value!!,
-            searchViewModel.searchTarget.value!!
+            searchFormViewModel.matchMode.value!!,
+            searchFormViewModel.searchTarget.value!!
         )
-        searchViewModel.executedSearch.postValue(searchParams)
+        searchResultsViewModel.search(context, searchParams)
     }
 
     companion object {

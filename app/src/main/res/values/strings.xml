@@ -34,6 +34,7 @@
     <string name="dict_entry_list_item_kanji_then_kana">%1$s - %2$s</string>
     <string name="dict_entry_list_item_kana">%1$s</string>
     <string name="error">There was an error: %1$s</string>
+    <string name="searching">Searching</string>
     <plurals name="number_of_matches_for_query">
         <item quantity="one">%d match for %2$s</item>
         <item quantity="other">%d matches for %2$s</item>
