@@ -65,8 +65,6 @@ fun Sense.validateThatAllNonNullMembersAreNonEmpty() {
 }
 
 class JMDictParser {
-    private val antonymInBandDelimiter = '・' // TODO move to model class?
-
     fun run(path: String): List<DictEntry> {
         val handler = JMDictHandler()
         SAXParserFactory.newInstance().newSAXParser().parse(path, handler)
@@ -130,18 +128,6 @@ class JMDictParser {
                     if (brokenReference) {
                         println("Warning: entry ${entry.id} has broken stagt ref $referencedKana")
                     }
-                }
-
-            // check antonym references
-            entry.senses.stream()
-                .filter { it.antonyms != null }
-                .flatMap { it.antonyms!!.stream() }
-                .flatMap { antonymEntryString -> antonymEntryString.split(antonymInBandDelimiter).stream() }
-                .filter { antonymWordOrNum -> antonymWordOrNum.toIntOrNull() == null }
-                .forEach { antonymWord ->
-                    val match = findWordRef(entries, antonymWord)
-                    if (match == null || match.id == entry.id)
-                        println("Warning: entry ${entry.id} has an antonym $antonymWord that doesn't match any other entry")
                 }
         }
     }
