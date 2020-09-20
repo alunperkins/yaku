@@ -22,45 +22,45 @@ package com.alun.jmdictparser
 import com.alun.common.models.*
 
 fun DictEntry.validateThatAllNonNullMembersAreNonEmpty() {
-    if (kanjis != null && kanjis!!.isEmpty()) throw Error("non-null member should be non-empty")
-    if (kanas.isEmpty()) throw Error("non-null member should be non-empty")
-    if (senses.isEmpty()) throw Error("non-null member should be non-empty")
+    if (kanjis != null && kanjis!!.isEmpty()) error("non-null member should be non-empty")
+    if (kanas.isEmpty()) error("non-null member should be non-empty")
+    if (senses.isEmpty()) error("non-null member should be non-empty")
 }
 
 fun Gloss.validateThatAllNonNullMembersAreNonEmpty() {
-    if (str.isEmpty()) throw Error("non-null member should be non-empty")
+    if (str.isEmpty()) error("non-null member should be non-empty")
 }
 
 fun Kana.validateThatAllNonNullMembersAreNonEmpty() {
-    if (str.isEmpty()) throw Error("non-null member should be non-empty")
-    if (infos != null && infos!!.isEmpty()) throw Error("non-null member should be non-empty")
-    if (priorities != null && priorities!!.isEmpty()) throw Error("non-null member should be non-empty")
-    if (onlyForKanjis != null && onlyForKanjis!!.isEmpty()) throw Error("non-null member should be non-empty")
-    if (str.isEmpty()) throw Error("non-null member should be non-empty")
+    if (str.isEmpty()) error("non-null member should be non-empty")
+    if (infos != null && infos!!.isEmpty()) error("non-null member should be non-empty")
+    if (priorities != null && priorities!!.isEmpty()) error("non-null member should be non-empty")
+    if (onlyForKanjis != null && onlyForKanjis!!.isEmpty()) error("non-null member should be non-empty")
+    if (str.isEmpty()) error("non-null member should be non-empty")
 }
 
 fun Kanji.validateThatAllNonNullMembersAreNonEmpty() {
-    if (str.isEmpty()) throw Error("non-null member should be non-empty")
-    if (infos != null && infos!!.isEmpty()) throw Error("non-null member should be non-empty")
-    if (priorities != null && priorities!!.isEmpty()) throw Error("non-null member should be non-empty")
+    if (str.isEmpty()) error("non-null member should be non-empty")
+    if (infos != null && infos!!.isEmpty()) error("non-null member should be non-empty")
+    if (priorities != null && priorities!!.isEmpty()) error("non-null member should be non-empty")
 }
 
 fun LoanSource.validateThatAllNonNullMembersAreNonEmpty() {
-    if (str != null && str!!.isEmpty()) throw Error("non-null member should be non-empty")
+    if (str != null && str!!.isEmpty()) error("non-null member should be non-empty")
 }
 
 fun Sense.validateThatAllNonNullMembersAreNonEmpty() {
-    if (stagks != null && stagks!!.isEmpty()) throw Error("non-null member should be non-empty")
-    if (stagrs != null && stagrs!!.isEmpty()) throw Error("non-null member should be non-empty")
-    if (pos != null && pos!!.isEmpty()) throw Error("non-null member should be non-empty")
-    if (xrefs != null && xrefs!!.isEmpty()) throw Error("non-null member should be non-empty")
-    if (antonyms != null && antonyms!!.isEmpty()) throw Error("non-null member should be non-empty")
-    if (fields != null && fields!!.isEmpty()) throw Error("non-null member should be non-empty")
-    if (miscs != null && miscs!!.isEmpty()) throw Error("non-null member should be non-empty")
-    if (infos != null && infos!!.isEmpty()) throw Error("non-null member should be non-empty")
-    if (loanSource != null && loanSource!!.isEmpty()) throw Error("non-null member should be non-empty")
-    if (dialect != null && dialect!!.isEmpty()) throw Error("non-null member should be non-empty")
-    if (glosses.isEmpty()) throw Error("non-null member should be non-empty")
+    if (stagks != null && stagks!!.isEmpty()) error("non-null member should be non-empty")
+    if (stagrs != null && stagrs!!.isEmpty()) error("non-null member should be non-empty")
+    if (pos != null && pos!!.isEmpty()) error("non-null member should be non-empty")
+    if (xrefs != null && xrefs!!.isEmpty()) error("non-null member should be non-empty")
+    if (antonyms != null && antonyms!!.isEmpty()) error("non-null member should be non-empty")
+    if (fields != null && fields!!.isEmpty()) error("non-null member should be non-empty")
+    if (miscs != null && miscs!!.isEmpty()) error("non-null member should be non-empty")
+    if (infos != null && infos!!.isEmpty()) error("non-null member should be non-empty")
+    if (loanSource != null && loanSource!!.isEmpty()) error("non-null member should be non-empty")
+    if (dialect != null && dialect!!.isEmpty()) error("non-null member should be non-empty")
+    if (glosses.isEmpty()) error("non-null member should be non-empty")
 }
 
 class EntriesValidator {
