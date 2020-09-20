@@ -41,13 +41,11 @@ data class Sense(
     /**
      * null or non-empty list
      */
-    val xrefs: List<String>?,
+    val xrefs: List<Reference>?,
     /**
-     * antonym string
-     * most "ant" entries have in-band separator characters "・", e.g. "<ant>難しい・むずかしい・1</ant>"
      * null or non-empty list
      */
-    val antonyms: List<String>?,
+    val antonyms: List<Reference>?,
     /**
      * null or non-empty list
      */

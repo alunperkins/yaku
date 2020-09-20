@@ -89,7 +89,7 @@ class EntriesValidator {
                 .forEach { referencedKanji ->
                     val brokenReference = !entryKanjiStrings.contains(referencedKanji)
                     if (brokenReference) {
-                        println("Warning: entry ${entry.id} has a broken re_restr ref $referencedKanji")
+                        println("Warning: entry ${entry.id} has a broken re_restr ref \"$referencedKanji\"")
                     }
                 }
 
@@ -100,7 +100,7 @@ class EntriesValidator {
                 .forEach { referencedKanji ->
                     val brokenReference = !entryKanjiStrings.contains(referencedKanji)
                     if (brokenReference) {
-                        println("Warning: entry ${entry.id} has broken stagk ref $referencedKanji")
+                        println("Warning: entry ${entry.id} has broken stagk ref \"$referencedKanji\"")
                     }
                 }
 
@@ -111,9 +111,37 @@ class EntriesValidator {
                 .forEach { referencedKana ->
                     val brokenReference = !entryKanaStrings.contains(referencedKana)
                     if (brokenReference) {
-                        println("Warning: entry ${entry.id} has broken stagt ref $referencedKana")
+                        println("Warning: entry ${entry.id} has broken stagt ref \"$referencedKana\"")
                     }
                 }
+
+//            // check antonym references (SLOW)
+//            entry.senses.stream()
+//                .filter { it.antonyms != null }
+//                .flatMap { it.antonyms!!.stream() }
+//                .forEach { antonym ->
+//                    val matches = searchWordRef(entries, antonym)
+//                    if (matches.isEmpty() || (matches.size == 1 && matches[0].id == entry.id))
+//                        println("Warning: entry ${entry.id} has an antonym \"$antonym\" that doesn't match any other entry")
+//                }
+//
+//            // check xref references (SLOW)
+//            entry.senses.stream()
+//                .filter { it.xrefs != null }
+//                .flatMap { it.xrefs!!.stream() }
+//                .forEach { xRef ->
+//                    val matches = searchWordRef(entries, xRef)
+//                    if (matches.isEmpty() || (matches.size == 1 && matches[0].id == entry.id))
+//                        println("Warning: entry ${entry.id} has an xref \"$xRef\" that doesn't match any other entry")
+//                }
+        }
+    }
+
+    private fun searchWordRef(entries: List<DictEntry>, ref: Reference): List<DictEntry> {
+        return entries.filter { entry ->
+            val kanjiMatch = if (ref.kanji == null) true else (entry.kanjis?.any { it.str == ref.kanji } ?: false)
+            val kanaMatch = if (ref.kana == null) true else entry.kanas.any { it.str == ref.kana }
+            kanjiMatch && kanaMatch
         }
     }
 

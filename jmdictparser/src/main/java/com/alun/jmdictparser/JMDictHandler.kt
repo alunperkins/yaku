@@ -20,6 +20,7 @@
 package com.alun.jmdictparser
 
 import com.alun.common.models.*
+import com.alun.common.utils.AlphabetDetector.Companion.isKana
 import com.alun.jmdictparser.models.GlossAttrs
 import com.alun.jmdictparser.models.LoanSourceAttrs
 import com.alun.jmdictparser.models.Tag
@@ -45,8 +46,8 @@ class JMDictHandler : DefaultHandler()/*default handler is just a template, all 
     private var entrySenseStagks: MutableList<String>? = null
     private var entrySenseStagrs: MutableList<String>? = null
     private var entrySensePoss: MutableList<POS>? = null
-    private var entrySenseXrefs: MutableList<String>? = null
-    private var entrySenseAnts: MutableList<String>? = null
+    private var entrySenseXrefs: MutableList<Reference>? = null
+    private var entrySenseAnts: MutableList<Reference>? = null
     private var entrySenseFields: MutableList<Field>? = null
     private var entrySenseMiscs: MutableList<Misc>? = null
     private var entrySenseInfos: MutableList<String>? = null
@@ -59,6 +60,8 @@ class JMDictHandler : DefaultHandler()/*default handler is just a template, all 
     private var entrySenseGlossAttrLang: Lang? = null
     private var entrySenseGlossAttrType: GlossType? = null
     private var cData: String? = null
+
+    private val referenceInBandDelimiter = '・'
 
     override fun characters(ch: CharArray?, start: Int, length: Int) {
         val str = String(ch!!, start, length)
@@ -158,7 +161,7 @@ class JMDictHandler : DefaultHandler()/*default handler is just a template, all 
                         when (GlossAttrs.fromStr(attributes.getQName(i))) {
                             GlossAttrs.Lang -> entrySenseGlossAttrLang = Lang.fromStr(attrVal)
                             GlossAttrs.Type -> entrySenseGlossAttrType = GlossType.fromStr(attrVal)
-                            GlossAttrs.Gend -> error("$GlossAttrs.Gend attributes appears but is not supported because assumed not to appear")
+                            GlossAttrs.Gend -> error("$GlossAttrs.Gend attributes appears but is not supported because assumed not to appear because does not appear in the copy of JMDict used during development")
                         }
                     }
                 }
@@ -243,9 +246,14 @@ class JMDictHandler : DefaultHandler()/*default handler is just a template, all 
                 entryKanaNoKanji = true
             }
             Tag.Sense -> {
-                if (entrySenseGlosses.isNullOrEmpty())
-                    println("Warning: $entryId has a sense with no glosses, ignoring that sense") // occurs because JMDict.xml has 6 totally empty sense tags `<sense></sense>` (no glosses and nothing else either)
-                else {
+                if (entrySenseGlosses.isNullOrEmpty()) {
+                    println("Warning: $entryId has a sense with no glosses, ignoring that sense")
+                    /*
+                    No-gloss senses are allowed in "entries which are purely for a cross-reference".
+                    They occur 6 times, as totally empty sense tags `<sense></sense>` (no glosses and nothing else either).
+                    They are not supported.
+                    */
+                } else {
                     if ((entrySenseStagks != null) && (entrySenseStagrs != null)) {
                         println("Entry $entryId has both stagk(s) and stagr(s)")
                     }
@@ -290,11 +298,11 @@ class JMDictHandler : DefaultHandler()/*default handler is just a template, all 
                 cData = null
             }
             Tag.SenseXRef -> {
-                entrySenseXrefs!!.add(cData!!)
+                entrySenseXrefs!!.add(parseReference(cData!!))
                 cData = null
             }
             Tag.SenseAnt -> {
-                entrySenseAnts!!.add(cData!!)
+                entrySenseAnts!!.add(parseReference(cData!!))
                 cData = null
             }
             Tag.SenseField -> {
@@ -344,5 +352,41 @@ class JMDictHandler : DefaultHandler()/*default handler is just a template, all 
                 }
             }
         }
+    }
+
+    /**
+     * Input is taken directly from the XML and is a string part optionally followed by a "・" delimeter and a sense number reference
+     * The string part may be a single string containing "・"s, or may be two strings without dots concatenated into one string with a "・" delimiter
+     * i.e.
+     * * a kanji string of another entry, possibly containing "・" characters
+     * * a kana string of another entry, possibly containing "・" characters
+     * * a kanji string of another entry containing no "・"s, a "・" delimeter, and then a kana string of another entry containing no "・"s
+     * i.e. "{kanji}" or "{kana}" or "{kanjiContainingNoDots}・{kanaContainingNoDots}"
+     */
+    private fun parseReference(_str: String): Reference {
+        val allParts = _str.split(referenceInBandDelimiter)
+
+        val senseNo = allParts.last().toIntOrNull()
+
+        val stringParts = if (senseNo == null)
+            allParts.subList(0, allParts.size)
+        else
+            allParts.subList(0, allParts.size - 1).ifEmpty { throw Error("Unsupported format in reference") }
+
+        val str = stringParts.joinToString(separator = referenceInBandDelimiter.toString())
+        val kanji: String?
+        val kana: String?
+        if (isKana(str)) {
+            kanji = null
+            kana = str
+        } else if(stringParts.size == 2 && !isKana(stringParts[0]) && isKana(stringParts[1])) {
+            kanji = stringParts[0]
+            kana = stringParts[1]
+        } else {
+            kanji = str
+            kana = null
+        }
+
+        return Reference(kanji, kana, senseNo)
     }
 }

@@ -42,13 +42,6 @@ class JMDictParser {
         val handler = JMDictHandler()
         SAXParserFactory.newInstance().newSAXParser().parse(pathJmDictXml, handler)
 
-        val entries = handler.entries
-
-        val validator = EntriesValidator()
-        validator.checkSample(entries)
-        validator.validateThatAllNonNullMembersAreNonEmpty(entries)
-        validator.checkReferentialIntegrity(entries)
-
-        return entries
+        return handler.entries
     }
 }

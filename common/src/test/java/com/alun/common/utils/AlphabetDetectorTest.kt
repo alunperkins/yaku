@@ -17,17 +17,21 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.common.models
+package com.alun.common.utils
 
-import kotlinx.serialization.Serializable
+import com.alun.common.utils.AlphabetDetector.Companion.isKana
+import org.junit.Assert.assertEquals
+import org.junit.Test
 
-@Serializable
-data class Gloss(
-    /**
-     * non-empty string
-     */
-    val str: String,
-    val lang: Lang,
-    val type: GlossType?
-    // attribute "gender" is described in the DTD of JMDict, but is not actually used anywhere within, so is not supported here
-)
+internal class AlphabetDetectorTest {
+    private val exampleKana = "むずかしい"
+    private val exampleKanji = "難しい"
+    private val exampleLatin = "difficult"
+
+    @Test
+    fun shouldDetectKana() {
+        assertEquals(true, isKana(exampleKana))
+        assertEquals(false, isKana(exampleKanji))
+        assertEquals(false, isKana(exampleLatin))
+    }
+}

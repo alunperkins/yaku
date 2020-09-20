@@ -22,12 +22,19 @@ package com.alun.common.models
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Gloss(
+data class Reference(
     /**
-     * non-empty string
+     * a string exactly matching a kanji string of the referenced word, or null if absent
      */
-    val str: String,
-    val lang: Lang,
-    val type: GlossType?
-    // attribute "gender" is described in the DTD of JMDict, but is not actually used anywhere within, so is not supported here
+    val kanji: String?,
+    /**
+     * a string exactly matching a kana string of the referenced word, or null if absent
+     */
+    val kana: String?,
+    /**
+     * the number of the referenced sense of the referenced word, where its senses are numbered in the order of
+     * appearance in the XML, starting from 1.
+     * Since we trim out senses with no glosses, it may very very rarely happen that this sense ref is broken.
+     */
+    val senseNo: Int?
 )

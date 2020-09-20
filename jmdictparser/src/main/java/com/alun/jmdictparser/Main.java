@@ -32,6 +32,11 @@ public class Main {
 
         final List<DictEntry> entries = new JMDictParser().run(pathJmDictXml);
 
+        final EntriesValidator validator = new EntriesValidator();
+        validator.checkSample(entries);
+        validator.validateThatAllNonNullMembersAreNonEmpty(entries);
+        validator.checkReferentialIntegrity(entries);
+
         final EntriesStatisticsPrinter analyzer = new EntriesStatisticsPrinter();
         analyzer.printStatistics(entries);
         analyzer.analyzeHowReRestrIsUsed(entries);

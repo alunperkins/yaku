@@ -143,7 +143,7 @@ public class EntriesStatisticsPrinter {
                 if (!counts.containsKey(key)) {
                     counts.put(key, 0L);
                 }
-//                if (key > 19) {
+//                if ((key instanceof Long) && ((Long) key) > 11) {
 //                    System.out.println(entry.toString());
 //                }
                 counts.put(key, counts.get(key) + 1);
