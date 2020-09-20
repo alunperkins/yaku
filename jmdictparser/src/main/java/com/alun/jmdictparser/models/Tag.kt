@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.indexcreator.models
+package com.alun.jmdictparser.models
 
 enum class Tag(val tag: String) {
     JMDict("JMdict"),

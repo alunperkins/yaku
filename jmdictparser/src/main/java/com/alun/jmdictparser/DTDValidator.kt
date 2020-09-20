@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.indexcreator
+package com.alun.jmdictparser
 
 import org.w3c.dom.Document
 import org.xml.sax.ErrorHandler

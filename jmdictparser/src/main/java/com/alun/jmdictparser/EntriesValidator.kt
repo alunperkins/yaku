@@ -17,10 +17,9 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.indexcreator
+package com.alun.jmdictparser
 
 import com.alun.common.models.*
-import javax.xml.parsers.SAXParserFactory
 
 fun DictEntry.validateThatAllNonNullMembersAreNonEmpty() {
     if (kanjis != null && kanjis!!.isEmpty()) throw Error("non-null member should be non-empty")
@@ -64,22 +63,8 @@ fun Sense.validateThatAllNonNullMembersAreNonEmpty() {
     if (glosses.isEmpty()) throw Error("non-null member should be non-empty")
 }
 
-class JMDictParser {
-    fun run(path: String): List<DictEntry> {
-        val handler = JMDictHandler()
-        SAXParserFactory.newInstance().newSAXParser().parse(path, handler)
-
-        val entries = handler.entries
-
-        checkSample(entries)
-
-        validateThatAllNonNullMembersAreNonEmpty(entries)
-        checkReferentialIntegrity(entries)
-
-        return entries
-    }
-
-    private fun validateThatAllNonNullMembersAreNonEmpty(entries: List<DictEntry>) {
+class EntriesValidator {
+    fun validateThatAllNonNullMembersAreNonEmpty(entries: List<DictEntry>) {
         entries.forEach { entry ->
             entry.validateThatAllNonNullMembersAreNonEmpty()
             entry.kanjis?.forEach { kanji -> kanji.validateThatAllNonNullMembersAreNonEmpty() }
@@ -92,7 +77,7 @@ class JMDictParser {
         }
     }
 
-    private fun checkReferentialIntegrity(entries: List<DictEntry>) {
+    fun checkReferentialIntegrity(entries: List<DictEntry>) {
         entries.forEach { entry ->
             // check re_restr references
             val entryKanjiStrings: List<String> = entry.kanjis?.map { it.str } ?: listOf()
@@ -132,15 +117,7 @@ class JMDictParser {
         }
     }
 
-    private fun findWordRef(entries: List<DictEntry>, wordRef: String): DictEntry? {
-        return entries.find { entry ->
-            entry.kanas.any { it.str == wordRef }
-                    ||
-                    entry.kanjis?.any { it.str == wordRef } ?: false
-        }
-    }
-
-    private fun checkSample(entries: List<DictEntry>) {
+    fun checkSample(entries: List<DictEntry>) {
         val entryCheckExpected = DictEntry(
             1038660,
             listOf(Kanji("空オケ", null, null)),

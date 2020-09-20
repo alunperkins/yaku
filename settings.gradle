@@ -1,3 +1,4 @@
+include ':jmdictparser'
 include ':indexcreator'
 include ':common'
 include ':app'

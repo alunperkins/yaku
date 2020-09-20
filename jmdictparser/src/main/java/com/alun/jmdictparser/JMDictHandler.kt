@@ -17,12 +17,12 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.indexcreator
+package com.alun.jmdictparser
 
 import com.alun.common.models.*
-import com.alun.indexcreator.models.GlossAttrs
-import com.alun.indexcreator.models.LoanSourceAttrs
-import com.alun.indexcreator.models.Tag
+import com.alun.jmdictparser.models.GlossAttrs
+import com.alun.jmdictparser.models.LoanSourceAttrs
+import com.alun.jmdictparser.models.Tag
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
 
@@ -246,6 +246,9 @@ class JMDictHandler : DefaultHandler()/*default handler is just a template, all 
                 if (entrySenseGlosses.isNullOrEmpty())
                     println("Warning: $entryId has a sense with no glosses, ignoring that sense") // occurs because JMDict.xml has 6 totally empty sense tags `<sense></sense>` (no glosses and nothing else either)
                 else {
+                    if ((entrySenseStagks != null) && (entrySenseStagrs != null)) {
+                        println("Entry $entryId has both stagk(s) and stagr(s)")
+                    }
                     entrySenses!!.add(
                         Sense(
                             entrySenseStagks,

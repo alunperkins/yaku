@@ -17,16 +17,16 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.indexcreator.models
+package com.alun.jmdictparser.models
 
-enum class LoanSourceAttrs(val qName: String) {
+enum class GlossAttrs(val qName: String) {
     Lang("xml:lang"),
-    Type("ls_type"), // when present its value is always "part", absence means "full"
-    Wasei("ls_wasei"), // when present its value is always "y"
+    Gend("g_gend"), // gender, for applicable languages
+    Type("g_type"), // values are "expl", "fig", "lit"
     ;
 
     companion object {
-        private val mapping = values().associateBy(LoanSourceAttrs::qName)
-        fun fromStr(s: String) = mapping[s] ?: error("Look up failed for \"$s\" in LoanSourceAttrs")
+        private val mapping = values().associateBy(GlossAttrs::qName)
+        fun fromStr(s: String) = mapping[s] ?: error("Look up failed for \"$s\" in GlossAttrs")
     }
 }

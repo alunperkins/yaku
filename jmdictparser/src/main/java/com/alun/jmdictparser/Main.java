@@ -17,22 +17,23 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.indexcreator;
+package com.alun.jmdictparser;
 
 import com.alun.common.models.DictEntry;
-import com.alun.jmdictparser.JMDictParser;
 
 import java.util.List;
 import java.util.Objects;
 
 public class Main {
+
     public static void main(String[] args) {
         final String pathJmDictXml = Objects.requireNonNull(args[0]);
         System.out.println("pathJmDictXml = " + pathJmDictXml);
+
         final List<DictEntry> entries = new JMDictParser().run(pathJmDictXml);
 
-        final String pathIndexDir = Objects.requireNonNull(args[1]);
-        System.out.println("pathIndexDir = " + pathIndexDir);
-        new IndexCreator().run(entries, pathIndexDir);
+        final EntriesStatisticsPrinter analyzer = new EntriesStatisticsPrinter();
+        analyzer.printStatistics(entries);
+        analyzer.analyzeHowReRestrIsUsed(entries);
     }
 }
