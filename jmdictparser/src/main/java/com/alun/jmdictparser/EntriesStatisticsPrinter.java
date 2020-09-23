@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -37,6 +38,7 @@ import java.util.stream.Stream;
 
 public class EntriesStatisticsPrinter {
     void printStatistics(List<DictEntry> entries) {
+        System.out.println("================ statistics printouts ================");
         System.out.println("Number of entries: " + entries.size());
 
         System.out.println("======= KANJIS PER ENTRY =======");
@@ -136,21 +138,13 @@ public class EntriesStatisticsPrinter {
     }
 
     private <T extends Comparable<T>> void histogram(List<DictEntry> entries, final Function<DictEntry, List<T>> getKeys) {
-        final TreeMap<T, Long> counts = new TreeMap<>();
-        for (DictEntry entry : entries) {
-            final List<T> keys = getKeys.apply(entry);
-            for (T key : keys) {
-                if (!counts.containsKey(key)) {
-                    counts.put(key, 0L);
-                }
-//                if ((key instanceof Long) && ((Long) key) > 11) {
-//                    System.out.println(entry.toString());
-//                }
-                counts.put(key, counts.get(key) + 1);
-            }
-        }
+        final Map<T, Long> counts = entries
+                .stream()
+                .flatMap(entry -> getKeys.apply(entry).stream())
+                .collect(Collectors.groupingBy(key -> key, Collectors.counting()));
+
         final long total = counts.values().stream().reduce(0L, Long::sum);
-        for (T key : counts.keySet()) {
+        for (T key : counts.keySet().stream().sorted().collect(Collectors.toList())) {
             long occurrences = counts.get(key);
             System.out.println(key + "," + occurrences + "," + Math.round(100 * (double) occurrences / (double) total) + "%");
         }
