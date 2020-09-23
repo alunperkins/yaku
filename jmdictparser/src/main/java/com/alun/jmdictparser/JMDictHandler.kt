@@ -386,6 +386,10 @@ class JMDictHandler : DefaultHandler()/*default handler is just a template, all 
             kanji = str
             kana = null
         }
+        if (stringParts.size > 1 && !(!isKana(stringParts[0]) && isKana(stringParts[1]))) {
+            println("$_str is a keb or reb containing dots by itself")
+        }
+
 
         return Reference(kanji, kana, senseNo)
     }

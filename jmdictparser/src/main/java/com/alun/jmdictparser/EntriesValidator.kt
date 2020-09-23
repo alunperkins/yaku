@@ -20,6 +20,11 @@
 package com.alun.jmdictparser
 
 import com.alun.common.models.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
+import java.util.*
+import kotlin.math.roundToInt
 
 fun DictEntry.validateThatAllNonNullMembersAreNonEmpty() {
     if (kanjis != null && kanjis!!.isEmpty()) error("non-null member should be non-empty")
@@ -78,71 +83,125 @@ class EntriesValidator {
     }
 
     fun checkReferentialIntegrity(entries: List<DictEntry>) {
-        entries.forEach { entry ->
-            // check re_restr references
-            val entryKanjiStrings: List<String> = entry.kanjis?.map { it.str } ?: listOf()
-            val entryKanaStrings: List<String> = entry.kanas.map { it.str }
-            entry.kanas
-                .stream()
-                .filter { it.onlyForKanjis != null }
-                .flatMap { it.onlyForKanjis!!.stream() }
-                .forEach { referencedKanji ->
-                    val brokenReference = !entryKanjiStrings.contains(referencedKanji)
-                    if (brokenReference) {
-                        println("Warning: entry ${entry.id} has a broken re_restr ref \"$referencedKanji\"")
-                    }
-                }
+        entries.forEach { checkEntryInternalReferenceIntegrity(it) }
 
-            // check stagk references
-            entry.senses.stream()
-                .filter { it.stagks != null }
-                .flatMap { it.stagks!!.stream() }
-                .forEach { referencedKanji ->
-                    val brokenReference = !entryKanjiStrings.contains(referencedKanji)
-                    if (brokenReference) {
-                        println("Warning: entry ${entry.id} has broken stagk ref \"$referencedKanji\"")
-                    }
-                }
+        checkAntonymReferences(entries) // (SLOW)
+        checkCrossReferences(entries) // (SLOW)
+    }
 
-            // check stagr references
-            entry.senses.stream()
-                .filter { it.stagrs != null }
-                .flatMap { it.stagrs!!.stream() }
-                .forEach { referencedKana ->
-                    val brokenReference = !entryKanaStrings.contains(referencedKana)
-                    if (brokenReference) {
-                        println("Warning: entry ${entry.id} has broken stagt ref \"$referencedKana\"")
-                    }
-                }
+    private fun checkEntryInternalReferenceIntegrity(entry: DictEntry) {
+        val entryKanjiStrings: List<String> = entry.kanjis?.map { it.str } ?: listOf()
+        val entryKanaStrings: List<String> = entry.kanas.map { it.str }
 
-//            // check antonym references (SLOW)
-//            entry.senses.stream()
-//                .filter { it.antonyms != null }
-//                .flatMap { it.antonyms!!.stream() }
-//                .forEach { antonym ->
-//                    val matches = searchWordRef(entries, antonym)
-//                    if (matches.isEmpty() || (matches.size == 1 && matches[0].id == entry.id))
-//                        println("Warning: entry ${entry.id} has an antonym \"$antonym\" that doesn't match any other entry")
-//                }
-//
-//            // check xref references (SLOW)
-//            entry.senses.stream()
-//                .filter { it.xrefs != null }
-//                .flatMap { it.xrefs!!.stream() }
-//                .forEach { xRef ->
-//                    val matches = searchWordRef(entries, xRef)
-//                    if (matches.isEmpty() || (matches.size == 1 && matches[0].id == entry.id))
-//                        println("Warning: entry ${entry.id} has an xref \"$xRef\" that doesn't match any other entry")
-//                }
+        // check re_restr references
+        entry.kanas
+            .stream()
+            .filter { it.onlyForKanjis != null }
+            .flatMap { it.onlyForKanjis!!.stream() }
+            .forEach { referencedKanji ->
+                val brokenReference = !entryKanjiStrings.contains(referencedKanji)
+                if (brokenReference) {
+                    error("Entry ${entry.id} has a broken re_restr ref \"$referencedKanji\"")
+                }
+            }
+
+        // check stagk references
+        entry.senses.stream()
+            .filter { it.stagks != null }
+            .flatMap { it.stagks!!.stream() }
+            .forEach { referencedKanji ->
+                val brokenReference = !entryKanjiStrings.contains(referencedKanji)
+                if (brokenReference) {
+                    error("Entry ${entry.id} has broken stagk ref \"$referencedKanji\"")
+                }
+            }
+
+        // check stagr references
+        entry.senses.stream()
+            .filter { it.stagrs != null }
+            .flatMap { it.stagrs!!.stream() }
+            .forEach { referencedKana ->
+                val brokenReference = !entryKanaStrings.contains(referencedKana)
+                if (brokenReference) {
+                    error("Entry ${entry.id} has broken stagt ref \"$referencedKana\"")
+                }
+            }
+    }
+
+    private fun checkAntonymReferences(entries: List<DictEntry>) {
+        checkReferences(entries, { s: Sense -> s.antonyms }, "antonym")
+    }
+
+    private fun checkCrossReferences(entries: List<DictEntry>) {
+        checkReferences(entries, { s: Sense -> s.xrefs }, "xRef")
+    }
+
+    private fun checkReferences(
+        entries: List<DictEntry>,
+        attributeGetter: (Sense) -> List<Reference>?,
+        attrName: String
+    ) {
+        println("======== $attrName checking")
+        val counts: TreeMap<Int, Long> = TreeMap()
+        runBlocking {
+            entries.forEach { entry ->
+                entry.senses
+                    .filter { sense -> attributeGetter(sense) != null }
+                    .flatMap { sense -> attributeGetter(sense)!! }
+                    .map { ref ->
+                        async(Dispatchers.Default) {
+                            val matches = searchWordRef(entries, ref).filter { it.id != entry.id }
+                            if (matches.isEmpty())
+                                error(
+                                    "Entry ${printEntry(entry)} has an $attrName $ref that " +
+                                            "doesn't match any other entry"
+                                )
+                            if (matches.size > 1)
+                                println(
+                                    "Warning: entry ${printEntry(entry)} has an $attrName $ref that " +
+                                            "matches multiple (${matches.size}) other entries ${printEntries(matches)}"
+                                )
+                            val noOfMatches = matches.size
+                            counts.put(noOfMatches, (counts[noOfMatches] ?: 0L) + 1)
+                        }
+                    }
+                    .forEach { it.await() }
+            }
+        }
+        println("==== $attrName reference hits counts")
+        val total = counts.values.stream().reduce(0L) { a, b -> a + b }
+        for (key in counts.keys) {
+            val occurrences = counts[key]!!
+            println("$key,$occurrences,${percent(occurrences, total)}%")
         }
     }
 
     private fun searchWordRef(entries: List<DictEntry>, ref: Reference): List<DictEntry> {
-        return entries.filter { entry ->
+        val allMatches = entries.filter { entry ->
             val kanjiMatch = if (ref.kanji == null) true else (entry.kanjis?.any { it.str == ref.kanji } ?: false)
             val kanaMatch = if (ref.kana == null) true else entry.kanas.any { it.str == ref.kana }
             kanjiMatch && kanaMatch
         }
+        val nullKanjiMatches = allMatches.filter { it.kanjis == null }
+        if (ref.kanji == null && nullKanjiMatches.isEmpty() && allMatches.size > 1)
+            println(
+                "Warning: Ref $ref has null kanji but it has multiple (${allMatches.size}) matches, " +
+                        "all of which have kanji: ${printEntries(allMatches)}"
+            )
+        return if (ref.kanji == null && nullKanjiMatches.isNotEmpty()) nullKanjiMatches else allMatches
+    }
+
+    private fun printEntries(entries: List<DictEntry>): String {
+        return entries.map { printEntry(it) }.joinToString(separator = ", ")
+    }
+
+    private fun printEntry(entry: DictEntry): String {
+        return listOfNotNull(
+            entry.kanjis?.joinToString(prefix = "Kanjis:", separator = ",") { it.str },
+            entry.kanas.joinToString(prefix = "Kanas:", separator = ",") { it.str },
+            entry.senses.filter { it.glosses.any { gloss -> gloss.lang == Lang.ENG } }.map { it.glosses }
+                .flatten().joinToString(prefix = "Eng:", separator = ",") { it.str }
+        ).joinToString(prefix = "(", separator = ", ", postfix = ")")
     }
 
     fun checkSample(entries: List<DictEntry>) {
@@ -189,7 +248,10 @@ class EntriesValidator {
                 ),
                 Sense(
                     null, null, null, null, null, null, null, null, null, null,
-                    listOf(Gloss("karaoke (cantar música grabada)", Lang.SPA, null), Gloss("karaoke", Lang.SPA, null))
+                    listOf(
+                        Gloss("karaoke (cantar música grabada)", Lang.SPA, null),
+                        Gloss("karaoke", Lang.SPA, null)
+                    )
                 ), Sense(
                     null, null, null, null, null, null, null, null, null, null,
                     listOf(Gloss("karaoke", Lang.SWE, null))
@@ -199,5 +261,9 @@ class EntriesValidator {
         )
         val entryCheckActual = entries[3445]
         if (entryCheckActual != entryCheckExpected) error("possible parsing error")
+    }
+
+    private fun percent(numerator: Number, denominator: Number): Int {
+        return (100 * numerator.toDouble() / denominator.toDouble()).roundToInt()
     }
 }
