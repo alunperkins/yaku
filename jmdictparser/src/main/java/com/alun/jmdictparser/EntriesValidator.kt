@@ -82,6 +82,46 @@ class EntriesValidator {
         }
     }
 
+    fun checkPosAvailabilityByLanguage(entries: List<DictEntry>) {
+        // verify that the first sense of an entry always has POS info
+        if (entries.all { it.senses[0].pos != null }) println("POS: POS info is always available")
+        else error("POS info is NOT ALWAYS AVAILABLE!")
+
+        print("Do all the entries have all english senses before any foreign sense? Search for exceptions: ")
+        val entriesWithSensesNotStrictlyEngFirst = entries.filter { entry ->
+            var firstNonEngHasAppeared = false
+            for (sens in entry.senses) {
+                if (sens.glosses[0].lang == Lang.ENG) {
+                    if (firstNonEngHasAppeared) return@filter true
+                } else firstNonEngHasAppeared = true
+            }
+            return@filter false
+        }
+        println("There are ${entriesWithSensesNotStrictlyEngFirst.size} entries where an Eng sense appears after a non-eng one")
+
+        print("Do non-Eng senses EVER have POS explicitly specified? ")
+        val sensesWhereNonEngHasAPos =
+            entries.filter { entry -> entry.senses.any { sense -> sense.glosses[0].lang != Lang.ENG && sense.pos != null } }
+        println("There are ${sensesWhereNonEngHasAPos.size} entries where a non-Eng sense has a pos")
+
+        if (entriesWithSensesNotStrictlyEngFirst.isEmpty() && sensesWhereNonEngHasAPos.isEmpty())
+            println("POS does not seem to be supported on languages other than English!")
+        else error("Pos configuration assumption broken")
+
+        // how common is it that a sense has its POS implied from a "carried-forward" earlier one?
+        val noOfEngSensesWithPos =
+            entries.map { entry -> entry.senses.filter { it.glosses[0].lang == Lang.ENG }.count { it.pos != null } }
+                .sum()
+        val noOfEngSensesWithoutPos =
+            entries.map { entry -> entry.senses.filter { it.glosses[0].lang == Lang.ENG }.count { it.pos == null } }
+                .sum()
+        println(
+            "$noOfEngSensesWithPos English senses have a pos, " +
+                    "and $noOfEngSensesWithoutPos English senses don't" +
+                    "(${percent(noOfEngSensesWithoutPos, noOfEngSensesWithPos + noOfEngSensesWithoutPos)}%)"
+        )
+    }
+
     fun checkReferentialIntegrity(entries: List<DictEntry>) {
         entries.forEach { checkEntryInternalReferenceIntegrity(it) }
 
@@ -156,11 +196,11 @@ class EntriesValidator {
                                     "Entry ${printEntry(entry)} has an $attrName $ref that " +
                                             "doesn't match any other entry"
                                 )
-                            if (matches.size > 1)
-                                println(
-                                    "Warning: entry ${printEntry(entry)} has an $attrName $ref that " +
-                                            "matches multiple (${matches.size}) other entries ${printEntries(matches)}"
-                                )
+//                            if (matches.size > 1)
+//                                println(
+//                                    "Warning: entry ${printEntry(entry)} has an $attrName $ref that " +
+//                                            "matches multiple (${matches.size}) other entries ${printEntries(matches)}"
+//                                )
                             val noOfMatches = matches.size
                             counts.put(noOfMatches, (counts[noOfMatches] ?: 0L) + 1)
                         }

@@ -35,6 +35,7 @@ public class Main {
         final EntriesValidator validator = new EntriesValidator();
         validator.checkSample(entries);
         validator.validateThatAllNonNullMembersAreNonEmpty(entries);
+        validator.checkPosAvailabilityByLanguage(entries);
         validator.checkReferentialIntegrity(entries);
 
         final EntriesStatisticsPrinter analyzer = new EntriesStatisticsPrinter();

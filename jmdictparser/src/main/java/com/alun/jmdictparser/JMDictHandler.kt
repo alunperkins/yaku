@@ -379,7 +379,7 @@ class JMDictHandler : DefaultHandler()/*default handler is just a template, all 
         if (isKana(str)) {
             kanji = null
             kana = str
-        } else if(stringParts.size == 2 && !isKana(stringParts[0]) && isKana(stringParts[1])) {
+        } else if (stringParts.size == 2 && !isKana(stringParts[0]) && isKana(stringParts[1])) {
             kanji = stringParts[0]
             kana = stringParts[1]
         } else {

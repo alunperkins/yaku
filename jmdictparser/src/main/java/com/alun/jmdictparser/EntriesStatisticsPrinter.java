@@ -102,6 +102,25 @@ public class EntriesStatisticsPrinter {
                                 .collect(Collectors.toSet()) // remove duplicates to get a list of languages supported by this entry
                 )
         );
+
+        System.out.println("======= SENSES WITH A POS PER ENTRY =======");
+        histogram(entries, entry -> Collections.singletonList(entry.getSenses().stream().filter(sense -> sense.getPos() != null).count()));
+        System.out.println("======= SENSES WITHOUT A POS PER ENTRY =======");
+        histogram(entries, entry -> Collections.singletonList(entry.getSenses().stream().filter(sense -> sense.getPos() == null).count()));
+        System.out.println("======= ENG SENSES WITH A POS PER ENTRY =======");
+        histogram(entries, entry -> Collections.singletonList(
+                entry.getSenses().stream()
+                        .filter(sense -> sense.getGlosses().get(0).getLang() == Lang.ENG)
+                        .filter(sense -> sense.getPos() != null)
+                        .count()
+        ));
+        System.out.println("======= ENG SENSES WITHOUT A POS PER ENTRY =======");
+        histogram(entries, entry -> Collections.singletonList(
+                entry.getSenses().stream()
+                        .filter(sense -> sense.getGlosses().get(0).getLang() == Lang.ENG)
+                        .filter(sense -> sense.getPos() == null)
+                        .count()
+        ));
     }
 
     void analyzeHowReRestrIsUsed(List<DictEntry> entries) {
