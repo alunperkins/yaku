@@ -254,9 +254,6 @@ class JMDictHandler : DefaultHandler()/*default handler is just a template, all 
                     They are not supported.
                     */
                 } else {
-                    if ((entrySenseStagks != null) && (entrySenseStagrs != null)) {
-                        println("Entry $entryId has both stagk(s) and stagr(s)")
-                    }
                     entrySenses!!.add(
                         Sense(
                             entrySenseStagks,
