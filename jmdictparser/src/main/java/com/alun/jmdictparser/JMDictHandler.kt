@@ -251,7 +251,7 @@ class JMDictHandler : DefaultHandler()/*default handler is just a template, all 
                     /*
                     No-gloss senses are allowed in "entries which are purely for a cross-reference".
                     They occur 6 times, as totally empty sense tags `<sense></sense>` (no glosses and nothing else either).
-                    They are not supported.
+                    They are not supported by us.
                     */
                 } else {
                     entrySenses!!.add(
@@ -386,7 +386,6 @@ class JMDictHandler : DefaultHandler()/*default handler is just a template, all 
         if (stringParts.size > 1 && !(!isKana(stringParts[0]) && isKana(stringParts[1]))) {
             println("$_str is a keb or reb containing dots by itself")
         }
-
 
         return Reference(kanji, kana, senseNo)
     }

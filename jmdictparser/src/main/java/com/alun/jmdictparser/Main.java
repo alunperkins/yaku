@@ -33,13 +33,15 @@ public class Main {
         final List<DictEntry> entries = new JMDictParser().run(pathJmDictXml);
 
         final EntriesValidator validator = new EntriesValidator();
-        validator.checkSample(entries);
+        validator.checkSampleEntry(entries);
         validator.validateThatAllNonNullMembersAreNonEmpty(entries);
-        validator.checkPosAvailabilityByLanguage(entries);
-        validator.checkReferentialIntegrity(entries);
+        validator.checkInternalReferentialIntegrityOfEachEntry(entries);
 
         final EntriesStatisticsPrinter analyzer = new EntriesStatisticsPrinter();
-        analyzer.printStatistics(entries);
+        analyzer.printVariousStatistics(entries);
+        analyzer.checkPosAvailabilityByLanguage(entries);
         analyzer.analyzeHowReRestrIsUsed(entries);
+        analyzer.checkAntonymReferences(entries); // (SLOW)
+        analyzer.checkCrossReferences(entries); // (SLOW)
     }
 }
