@@ -107,13 +107,28 @@ class EntriesStatisticsPrinter {
         }
 
         println("======= ENG SENSES WITHOUT A POS PER ENTRY =======")
-        histogram(entries) { entry: DictEntry ->
+        histogram(entries) { entry ->
             listOf(entry.senses
                 .filter { it.glosses[0].lang === Lang.ENG }
                 .filter { it.pos == null }
                 .count()
             )
         }
+
+        println("======= KANJI STRING LENGTHS =======")
+        histogram(entries) { entry ->
+            entry.kanjis?.map { it.str.length } ?: listOf(0)
+        }
+        println("======= KANA STRING LENGTHS =======")
+        histogram(entries) { entry ->
+            entry.kanas.map { it.str.length }
+        }
+
+        println("==== Test the gui layout(s) by looking up:")
+        println(" the longest-kanji entry: ${entryString(entries.maxBy { entry -> entry.kanjis?.map { it.str.length }?.max() ?: 0 }!!)}")
+        println(" the longest-kana entry: ${entryString(entries.maxBy { entry -> entry.kanas.map { it.str.length }.max()!! }!!)}")
+        println(" the most-kanjis entry: ${entryString(entries.maxBy { entry -> entry.kanjis?.size ?: 0 }!!)}")
+        println(" the most-kanas entry: ${entryString(entries.maxBy { entry -> entry.kanas.size }!!)}")
     }
 
     fun analyzeHowReRestrIsUsed(entries: List<DictEntry>) {
