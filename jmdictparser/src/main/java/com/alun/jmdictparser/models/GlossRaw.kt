@@ -17,23 +17,20 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.common.models
+package com.alun.jmdictparser.models
 
-import kotlinx.serialization.Serializable
+import com.alun.common.models.GlossType
+import com.alun.common.models.Lang
 
-@Serializable
-data class DictEntry(
-    val id: Int, // ent_seq
+/**
+ * matches the <gloss> tag type from the JMDict XML, but is used to create a different Gloss type of our own
+ */
+data class GlossRaw(
     /**
-     * null or non-empty list
+     * non-empty string
      */
-    val kanjis: List<Kanji>?,
-    /**
-     * non-empty list
-     */
-    val kanas: List<Kana>,
-    /**
-     * non-empty list
-     */
-    val senses: List<Sense>
+    val str: String,
+    val lang: Lang,
+    val type: GlossType?
+    // attribute "gender" is described in the DTD of JMDict, but is not actually used anywhere within, so is not supported here
 )

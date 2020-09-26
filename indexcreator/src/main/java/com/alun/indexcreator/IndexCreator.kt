@@ -52,7 +52,7 @@ class IndexCreator {
             }
             entry.senses.forEach { sense ->
                 sense.glosses.forEach { gloss ->
-                    document.add(TextField(gloss.lang.threeLetterCode, gloss.str, Field.Store.NO))
+                    document.add(TextField(sense.lang.threeLetterCode, gloss.str, Field.Store.NO))
                 }
             }
             document.add(TextField("entry", json.stringify(serializer, entry), Field.Store.YES))

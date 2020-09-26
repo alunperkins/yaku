@@ -20,14 +20,17 @@
 package com.alun.jmdictparser
 
 import com.alun.common.models.*
+import com.alun.jmdictparser.models.DictEntryRaw
+import com.alun.jmdictparser.models.GlossRaw
+import com.alun.jmdictparser.models.SenseRaw
 
-fun DictEntry.validateThatAllNonNullMembersAreNonEmpty() {
-    if (kanjis != null && kanjis!!.isEmpty()) error("non-null member should be non-empty")
+fun DictEntryRaw.validateThatAllNonNullMembersAreNonEmpty() {
+    if (kanjis != null && kanjis.isEmpty()) error("non-null member should be non-empty")
     if (kanas.isEmpty()) error("non-null member should be non-empty")
     if (senses.isEmpty()) error("non-null member should be non-empty")
 }
 
-fun Gloss.validateThatAllNonNullMembersAreNonEmpty() {
+fun GlossRaw.validateThatAllNonNullMembersAreNonEmpty() {
     if (str.isEmpty()) error("non-null member should be non-empty")
 }
 
@@ -49,22 +52,22 @@ fun LoanSource.validateThatAllNonNullMembersAreNonEmpty() {
     if (str != null && str!!.isEmpty()) error("non-null member should be non-empty")
 }
 
-fun Sense.validateThatAllNonNullMembersAreNonEmpty() {
-    if (stagks != null && stagks!!.isEmpty()) error("non-null member should be non-empty")
-    if (stagrs != null && stagrs!!.isEmpty()) error("non-null member should be non-empty")
-    if (pos != null && pos!!.isEmpty()) error("non-null member should be non-empty")
-    if (xrefs != null && xrefs!!.isEmpty()) error("non-null member should be non-empty")
-    if (antonyms != null && antonyms!!.isEmpty()) error("non-null member should be non-empty")
-    if (fields != null && fields!!.isEmpty()) error("non-null member should be non-empty")
-    if (miscs != null && miscs!!.isEmpty()) error("non-null member should be non-empty")
-    if (infos != null && infos!!.isEmpty()) error("non-null member should be non-empty")
-    if (loanSource != null && loanSource!!.isEmpty()) error("non-null member should be non-empty")
-    if (dialect != null && dialect!!.isEmpty()) error("non-null member should be non-empty")
+fun SenseRaw.validateThatAllNonNullMembersAreNonEmpty() {
+    if (stagks != null && stagks.isEmpty()) error("non-null member should be non-empty")
+    if (stagrs != null && stagrs.isEmpty()) error("non-null member should be non-empty")
+    if (pos != null && pos.isEmpty()) error("non-null member should be non-empty")
+    if (xrefs != null && xrefs.isEmpty()) error("non-null member should be non-empty")
+    if (antonyms != null && antonyms.isEmpty()) error("non-null member should be non-empty")
+    if (fields != null && fields.isEmpty()) error("non-null member should be non-empty")
+    if (miscs != null && miscs.isEmpty()) error("non-null member should be non-empty")
+    if (infos != null && infos.isEmpty()) error("non-null member should be non-empty")
+    if (loanSource != null && loanSource.isEmpty()) error("non-null member should be non-empty")
+    if (dialect != null && dialect.isEmpty()) error("non-null member should be non-empty")
     if (glosses.isEmpty()) error("non-null member should be non-empty")
 }
 
 class EntriesValidator {
-    fun validateThatAllNonNullMembersAreNonEmpty(entries: List<DictEntry>) {
+    fun validateThatAllNonNullMembersAreNonEmpty(entries: List<DictEntryRaw>) {
         entries.forEach { entry ->
             entry.validateThatAllNonNullMembersAreNonEmpty()
             entry.kanjis?.forEach { kanji -> kanji.validateThatAllNonNullMembersAreNonEmpty() }
@@ -77,11 +80,11 @@ class EntriesValidator {
         }
     }
 
-    fun checkInternalReferentialIntegrityOfEachEntry(entries: List<DictEntry>) {
+    fun checkInternalReferentialIntegrityOfEachEntry(entries: List<DictEntryRaw>) {
         entries.forEach { checkEntryInternalReferenceIntegrity(it) }
     }
 
-    private fun checkEntryInternalReferenceIntegrity(entry: DictEntry) {
+    private fun checkEntryInternalReferenceIntegrity(entry: DictEntryRaw) {
         val entryKanjiStrings: List<String> = entry.kanjis?.map { it.str } ?: listOf()
         val entryKanaStrings: List<String> = entry.kanas.map { it.str }
 
@@ -120,9 +123,9 @@ class EntriesValidator {
             }
     }
 
-    fun checkSampleEntry(entries: List<DictEntry>) {
+    fun checkSampleEntry(entries: List<DictEntryRaw>) {
         // some entry I typed out by looking at the JMDict XML manually
-        val entryCheckExpected = DictEntry(
+        val entryCheckExpected = DictEntryRaw(
             1038660,
             listOf(Kanji("空オケ", null, null)),
             listOf(
@@ -130,7 +133,7 @@ class EntriesValidator {
                 Kana("カラオケ", null, listOf(Priority.ICHI1, Priority.SPEC1), null, true)
             ),
             listOf(
-                Sense(
+                SenseRaw(
                     null,
                     null,
                     listOf(POS.N),
@@ -141,37 +144,37 @@ class EntriesValidator {
                     listOf("from 空 and オーケストラ"),
                     null,
                     null,
-                    listOf(Gloss("karaoke", Lang.ENG, null))
+                    listOf(GlossRaw("karaoke", Lang.ENG, null))
                 ),
-                Sense(
+                SenseRaw(
                     null, null, null, null, null, null, null, null, null, null,
-                    listOf(Gloss("karaoke", Lang.DUT, null))
+                    listOf(GlossRaw("karaoke", Lang.DUT, null))
                 ),
-                Sense(
+                SenseRaw(
                     null, null, null, null, null, null, null, null, null, null,
-                    listOf(Gloss("karaoké", Lang.FRE, null))
+                    listOf(GlossRaw("karaoké", Lang.FRE, null))
                 ),
-                Sense(
+                SenseRaw(
                     null, null, null, null, null, null, null, null, null, null,
-                    listOf(Gloss("Karaoke (wörtl. leeres Orchester)", Lang.GER, null))
+                    listOf(GlossRaw("Karaoke (wörtl. leeres Orchester)", Lang.GER, null))
                 ),
-                Sense(
+                SenseRaw(
                     null, null, null, null, null, null, null, null, null, null,
-                    listOf(Gloss("караоке", Lang.RUS, null))
+                    listOf(GlossRaw("караоке", Lang.RUS, null))
                 ),
-                Sense(
+                SenseRaw(
                     null, null, null, null, null, null, null, null, null, null,
-                    listOf(Gloss("karaoke (petje s posneto spremljavo)", Lang.SLV, null))
+                    listOf(GlossRaw("karaoke (petje s posneto spremljavo)", Lang.SLV, null))
                 ),
-                Sense(
+                SenseRaw(
                     null, null, null, null, null, null, null, null, null, null,
                     listOf(
-                        Gloss("karaoke (cantar música grabada)", Lang.SPA, null),
-                        Gloss("karaoke", Lang.SPA, null)
+                        GlossRaw("karaoke (cantar música grabada)", Lang.SPA, null),
+                        GlossRaw("karaoke", Lang.SPA, null)
                     )
-                ), Sense(
+                ), SenseRaw(
                     null, null, null, null, null, null, null, null, null, null,
-                    listOf(Gloss("karaoke", Lang.SWE, null))
+                    listOf(GlossRaw("karaoke", Lang.SWE, null))
                 )
 
             )

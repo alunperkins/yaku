@@ -27,7 +27,5 @@ data class Gloss(
      * non-empty string
      */
     val str: String,
-    val lang: Lang,
     val type: GlossType?
-    // attribute "gender" is described in the DTD of JMDict, but is not actually used anywhere within, so is not supported here
 )

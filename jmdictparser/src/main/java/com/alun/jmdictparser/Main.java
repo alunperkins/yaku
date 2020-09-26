@@ -19,7 +19,7 @@
  */
 package com.alun.jmdictparser;
 
-import com.alun.common.models.DictEntry;
+import com.alun.jmdictparser.models.DictEntryRaw;
 
 import java.util.List;
 import java.util.Objects;
@@ -30,7 +30,7 @@ public class Main {
         final String pathJmDictXml = Objects.requireNonNull(args[0]);
         System.out.println("pathJmDictXml = " + pathJmDictXml);
 
-        final List<DictEntry> entries = new JMDictParser().run(pathJmDictXml);
+        final List<DictEntryRaw> entries = new JMDictParser().run(pathJmDictXml);
 
         final EntriesValidator validator = new EntriesValidator();
         validator.checkSampleEntry(entries);

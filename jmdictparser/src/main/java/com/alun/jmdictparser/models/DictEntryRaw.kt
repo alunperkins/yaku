@@ -17,12 +17,15 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.common.models
+package com.alun.jmdictparser.models
 
-import kotlinx.serialization.Serializable
+import com.alun.common.models.Kana
+import com.alun.common.models.Kanji
 
-@Serializable
-data class DictEntry(
+/**
+ * matches the <entry> tag type from the JMDict XML, but is used to create a slightly different DictEntry type of our own
+ */
+data class DictEntryRaw(
     val id: Int, // ent_seq
     /**
      * null or non-empty list
@@ -35,5 +38,5 @@ data class DictEntry(
     /**
      * non-empty list
      */
-    val senses: List<Sense>
+    val senses: List<SenseRaw>
 )

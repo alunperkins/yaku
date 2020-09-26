@@ -57,9 +57,10 @@ internal class DictEntryTest {
                 Sense(
                     listOf("k1", "k2"),
                     listOf("k3", "k4"),
+                    Lang.DAN,
                     listOf(POS.ADJ_F, POS.ADJ_NA),
-                    listOf("x1", "x2"),
-                    listOf("nope", "nah"),
+                    listOf(Reference("x1", null, null), Reference("x2", null, null)),
+                    listOf(Reference("ant1", null, null), Reference("ant2", null, null)),
                     listOf(Field.ANAT, Field.CHRISTN),
                     listOf(Misc.ABBR, Misc.DATED),
                     listOf("weird", "from TV"),
@@ -75,12 +76,10 @@ internal class DictEntryTest {
                     listOf(
                         Gloss(
                             "g1",
-                            Lang.FRE,
                             GlossType.EXPL
                         ),
                         Gloss(
                             "g2",
-                            Lang.FIN,
                             GlossType.LIT
                         )
                     )

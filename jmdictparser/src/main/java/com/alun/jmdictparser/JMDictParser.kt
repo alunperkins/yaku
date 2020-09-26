@@ -19,7 +19,7 @@
  */
 package com.alun.jmdictparser
 
-import com.alun.common.models.DictEntry
+import com.alun.jmdictparser.models.DictEntryRaw
 import javax.xml.parsers.SAXParserFactory
 
 /**
@@ -36,8 +36,8 @@ import javax.xml.parsers.SAXParserFactory
  * @param args path to JMdict.xml
  */
 class JMDictParser {
-    fun run(pathJmDictXml: String): List<DictEntry> {
-        DTDValidator().throwIfDtdInvalid(pathJmDictXml)
+    fun run(pathJmDictXml: String): List<DictEntryRaw> {
+        DTDValidator().requireDTDValid(pathJmDictXml)
 
         val handler = JMDictHandler()
         SAXParserFactory.newInstance().newSAXParser().parse(pathJmDictXml, handler)

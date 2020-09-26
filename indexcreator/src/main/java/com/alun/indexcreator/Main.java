@@ -20,7 +20,7 @@
 package com.alun.indexcreator;
 
 import com.alun.common.models.DictEntry;
-import com.alun.jmdictparser.JMDictParser;
+import com.alun.jmdictparser.DictionaryProvider;
 
 import java.util.List;
 import java.util.Objects;
@@ -29,7 +29,7 @@ public class Main {
     public static void main(String[] args) {
         final String pathJmDictXml = Objects.requireNonNull(args[0]);
         System.out.println("pathJmDictXml = " + pathJmDictXml);
-        final List<DictEntry> entries = new JMDictParser().run(pathJmDictXml);
+        final List<DictEntry> entries = new DictionaryProvider().run(pathJmDictXml);
 
         final String pathIndexDir = Objects.requireNonNull(args[1]);
         System.out.println("pathIndexDir = " + pathIndexDir);

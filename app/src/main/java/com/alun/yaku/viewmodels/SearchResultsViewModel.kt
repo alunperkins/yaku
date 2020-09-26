@@ -63,11 +63,7 @@ class SearchResultsViewModel() : ViewModel() {
         val matches = searchService.getResults(params)
         val matchesTrimmedToTargetLang = matches
             .map { entry ->
-                if (entry.senses.any { sense -> sense.glosses.isNotEmpty() && sense.glosses.any { gloss -> gloss.lang != sense.glosses[0].lang } }) {
-                    println("WARNING: Broken assumption: some sense(s) have glosses heterogeneous in language! Will cause results display to display broken info.")
-                }
-                val senses =
-                    entry.senses.filter { sense -> sense.glosses.any { gloss -> gloss.lang == targetLang } } // ASSUMES that all glosses of a sense have the same lang!
+                val senses = entry.senses.filter { it.lang == targetLang }
                 DictEntry(entry.id, entry.kanjis, entry.kanas, senses)
             }
             .filter { entry -> entry.senses.isNotEmpty() }

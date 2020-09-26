@@ -17,12 +17,14 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.common.models
+package com.alun.jmdictparser.models
 
-import kotlinx.serialization.Serializable
+import com.alun.common.models.*
 
-@Serializable
-data class Sense(
+/**
+ * matches the <sense> tag type from the JMDict XML, but is used to create a different Sense type of our own
+ */
+data class SenseRaw(
     /**
      * These elements, if present, indicate that the sense is restricted to the lexeme represented by the keb and/or reb.
      * null or non-empty list
@@ -34,12 +36,7 @@ data class Sense(
      */
     val stagrs: List<String>?,
     /**
-     * language
-     */
-    val lang: Lang,
-    /**
      * part of speech
-     * Upstream data source only supports this field for English senses
      * null or non-empty list
      */
     val pos: List<POS>?,
@@ -74,5 +71,5 @@ data class Sense(
     /**
      * non-empty list
      */
-    val glosses: List<Gloss>
+    val glosses: List<GlossRaw>
 )

@@ -19,10 +19,10 @@
  */
 package com.alun.jmdictparser
 
-import com.alun.common.models.DictEntry
 import com.alun.common.models.Lang
 import com.alun.common.models.Reference
-import com.alun.common.models.Sense
+import com.alun.jmdictparser.models.DictEntryRaw
+import com.alun.jmdictparser.models.SenseRaw
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
@@ -34,7 +34,7 @@ import kotlin.math.roundToInt
 import kotlin.streams.toList
 
 class EntriesStatisticsPrinter {
-    fun printVariousStatistics(entries: List<DictEntry>) {
+    fun printVariousStatistics(entries: List<DictEntryRaw>) {
         println("================ statistics printouts ================")
         println("Number of entries: ${entries.size}")
 
@@ -125,13 +125,23 @@ class EntriesStatisticsPrinter {
         }
 
         println("==== Test the gui layout(s) by looking up:")
-        println(" the longest-kanji entry: ${entryString(entries.maxBy { entry -> entry.kanjis?.map { it.str.length }?.max() ?: 0 }!!)}")
-        println(" the longest-kana entry: ${entryString(entries.maxBy { entry -> entry.kanas.map { it.str.length }.max()!! }!!)}")
+        println(" the longest-kanji entry: ${entryString(entries.maxBy { entry ->
+            entry.kanjis?.map { it.str.length }?.max() ?: 0
+        }!!)}")
+        println(" the longest-kana entry: ${entryString(entries.maxBy { entry ->
+            entry.kanas.map { it.str.length }.max()!!
+        }!!)}")
         println(" the most-kanjis entry: ${entryString(entries.maxBy { entry -> entry.kanjis?.size ?: 0 }!!)}")
         println(" the most-kanas entry: ${entryString(entries.maxBy { entry -> entry.kanas.size }!!)}")
+        println(" the most-english-senses entry: ${entryString(entries.maxBy { entry -> entry.senses.filter { it.glosses[0].lang == Lang.ENG }.size }!!)}")
+        println(" the most-glosses-in-an-english-sense entry: ${entryString(entries.maxBy { entry ->
+            entry.senses.filter { it.glosses[0].lang == Lang.ENG }.map { it.glosses.size }.max()!!
+        }!!)}")
+
+        println(" and just FYI the most-english-senses-without-a-pos entry: ${entryString(entries.maxBy { entry -> entry.senses.filter { it.pos.isNullOrEmpty() }.size }!!)}")
     }
 
-    fun analyzeHowReRestrIsUsed(entries: List<DictEntry>) {
+    fun analyzeHowReRestrIsUsed(entries: List<DictEntryRaw>) {
         println("======= re_restr use =======")
         val noOfEntriesWithDisjointReRestrCombinations = AtomicInteger(0)
         val noOfEntriesWithPartiallyOverlappingReRestrCombinations = AtomicInteger(0)
@@ -161,7 +171,7 @@ class EntriesStatisticsPrinter {
         )
     }
 
-    fun checkPosAvailabilityByLanguage(entries: List<DictEntry>) {
+    fun checkPosAvailabilityByLanguage(entries: List<DictEntryRaw>) {
         // verify that the first sense of an entry always has POS info
         if (entries.all { it.senses[0].pos != null }) println("POS: POS info is always available")
         else error("POS info is NOT ALWAYS AVAILABLE!")
@@ -201,17 +211,17 @@ class EntriesStatisticsPrinter {
         )
     }
 
-    fun checkAntonymReferences(entries: List<DictEntry>) {
-        checkReferences(entries, { s: Sense -> s.antonyms }, "antonym")
+    fun checkAntonymReferences(entries: List<DictEntryRaw>) {
+        checkReferences(entries, { s -> s.antonyms }, "antonym")
     }
 
-    fun checkCrossReferences(entries: List<DictEntry>) {
-        checkReferences(entries, { s: Sense -> s.xrefs }, "xRef")
+    fun checkCrossReferences(entries: List<DictEntryRaw>) {
+        checkReferences(entries, { s -> s.xrefs }, "xRef")
     }
 
     private fun checkReferences(
-        entries: List<DictEntry>,
-        attributeGetter: (Sense) -> List<Reference>?,
+        entries: List<DictEntryRaw>,
+        attributeGetter: (SenseRaw) -> List<Reference>?,
         attrName: String
     ) {
         println("======== $attrName checking")
@@ -250,7 +260,7 @@ class EntriesStatisticsPrinter {
         }
     }
 
-    private fun lookupWordRef(entries: List<DictEntry>, ref: Reference): List<DictEntry> {
+    private fun lookupWordRef(entries: List<DictEntryRaw>, ref: Reference): List<DictEntryRaw> {
         val allMatches = entries.filter { entry ->
             val kanjiMatch = ref.kanji == null || (entry.kanjis?.any { it.str == ref.kanji } ?: false)
             val kanaMatch = ref.kana == null || entry.kanas.any { it.str == ref.kana }
@@ -265,11 +275,11 @@ class EntriesStatisticsPrinter {
         return if (ref.kanji == null && nullKanjiMatches.isNotEmpty()) nullKanjiMatches else allMatches
     }
 
-    private fun entriesString(entries: List<DictEntry>): String {
+    private fun entriesString(entries: List<DictEntryRaw>): String {
         return entries.joinToString(separator = ", ") { entryString(it) }
     }
 
-    private fun entryString(entry: DictEntry): String {
+    private fun entryString(entry: DictEntryRaw): String {
         return listOfNotNull(
             entry.kanjis?.joinToString(prefix = "Kanjis:", separator = ",") { it.str },
             entry.kanas.joinToString(prefix = "Kanas:", separator = ",") { it.str },
@@ -287,12 +297,12 @@ class EntriesStatisticsPrinter {
      * output should be csv-compatible, suitable for copy-pasting into a spreadsheet is you want to make a graph
      */
     private fun <T : Comparable<T>?> histogram(
-        entries: List<DictEntry>,
-        getKeys: (DictEntry) -> List<T>
+        entries: List<DictEntryRaw>,
+        getKeys: (DictEntryRaw) -> List<T>
     ) {
         val counts: Map<T, Long> = entries.stream()
             .flatMap { getKeys(it).stream() }
-            .collect(Collectors.groupingBy(Function { key: T  -> key }, Collectors.counting()))
+            .collect(Collectors.groupingBy(Function { key: T -> key }, Collectors.counting()))
 
         val total = counts.values.sum()
 

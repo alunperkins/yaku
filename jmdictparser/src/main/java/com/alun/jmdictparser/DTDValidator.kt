@@ -26,7 +26,7 @@ import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
 class DTDValidator {
-    fun throwIfDtdInvalid(filePath: String) {
+    fun requireDTDValid(filePath: String) {
         val domFactory: DocumentBuilderFactory = DocumentBuilderFactory.newInstance().apply {
             isValidating = true
         }

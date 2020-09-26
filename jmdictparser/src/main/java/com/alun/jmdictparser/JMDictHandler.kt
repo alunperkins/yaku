@@ -21,15 +21,13 @@ package com.alun.jmdictparser
 
 import com.alun.common.models.*
 import com.alun.common.utils.AlphabetDetector.Companion.isKana
-import com.alun.jmdictparser.models.GlossAttrs
-import com.alun.jmdictparser.models.LoanSourceAttrs
-import com.alun.jmdictparser.models.Tag
+import com.alun.jmdictparser.models.*
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
 
 class JMDictHandler : DefaultHandler()/*default handler is just a template, all its methods have empty bodies*/ {
 
-    val entries = ArrayList<DictEntry>() // TODO publish these reactively, instead of collecting them all?
+    val entries = ArrayList<DictEntryRaw>() // TODO publish these reactively, instead of collecting them all?
 
     private var entryId: Int? = null
     private var entryKanjis: MutableList<Kanji>? = null
@@ -42,7 +40,7 @@ class JMDictHandler : DefaultHandler()/*default handler is just a template, all 
     private var entryKanaPriorities: MutableList<Priority>? = null
     private var entryKanaRestrs: MutableList<String>? = null
     private var entryKanaNoKanji: Boolean? = null
-    private var entrySenses: MutableList<Sense>? = null
+    private var entrySenses: MutableList<SenseRaw>? = null
     private var entrySenseStagks: MutableList<String>? = null
     private var entrySenseStagrs: MutableList<String>? = null
     private var entrySensePoss: MutableList<POS>? = null
@@ -56,7 +54,7 @@ class JMDictHandler : DefaultHandler()/*default handler is just a template, all 
     private var entrySenseLsourceAttrType: LoanType? = null
     private var entrySenseLsourceAttrWasei: Boolean? = null
     private var entrySenseDials: MutableList<Dialect>? = null
-    private var entrySenseGlosses: MutableList<Gloss>? = null
+    private var entrySenseGlosses: MutableList<GlossRaw>? = null
     private var entrySenseGlossAttrLang: Lang? = null
     private var entrySenseGlossAttrType: GlossType? = null
     private var cData: String? = null
@@ -175,7 +173,7 @@ class JMDictHandler : DefaultHandler()/*default handler is just a template, all 
             Tag.JMDict -> {
             }
             Tag.Entry -> {
-                entries.add(DictEntry(entryId!!, entryKanjis, entryKanas!!, entrySenses!!))
+                entries.add(DictEntryRaw(entryId!!, entryKanjis, entryKanas!!, entrySenses!!))
                 entryId = null
                 entryKanjis = null
                 entryKanas = null
@@ -255,7 +253,7 @@ class JMDictHandler : DefaultHandler()/*default handler is just a template, all 
                     */
                 } else {
                     entrySenses!!.add(
-                        Sense(
+                        SenseRaw(
                             entrySenseStagks,
                             entrySenseStagrs,
                             entrySensePoss,
@@ -337,7 +335,7 @@ class JMDictHandler : DefaultHandler()/*default handler is just a template, all 
                     println("Warning: $entryId has a gloss with no text, ignoring that gloss") // occurs because entry 1422200 has a sense `<sense><gloss xml:lang="spa"></gloss></sense>`
                 else {
                     entrySenseGlosses!!.add(
-                        Gloss(
+                        GlossRaw(
                             cData!!,
                             entrySenseGlossAttrLang!!,
                             entrySenseGlossAttrType
