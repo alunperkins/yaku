@@ -27,7 +27,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.alun.common.models.DictEntry
 import com.alun.yaku.fragments.SearchFragment
 import com.alun.yaku.fragments.SearchResultsFragment
+import com.alun.yaku.fragments.WordDetailFragment
 import com.alun.yaku.models.SearchParams
+import com.alun.yaku.models.WordDetail
+import com.alun.yaku.viewmodels.EntrySelectedViewModel
 import com.alun.yaku.viewmodels.SearchResultsViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -35,6 +38,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recentlyViewedListViewAdapter: DictEntryAdapter
     private lateinit var recentlyViewedListViewManager: LinearLayoutManager
     private val searchResultsViewModel: SearchResultsViewModel by viewModels()
+    private val entrySelectedViewModel: EntrySelectedViewModel by viewModels()
 
     val words: List<DictEntry> = listOf()
 
@@ -72,6 +76,17 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        entrySelectedViewModel.entrySelected.observe(this, Observer { wordDetail: WordDetail? ->
+            if (wordDetail != null) {
+                supportFragmentManager
+                    .beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.activity_main_fragment_holder, WordDetailFragment.newInstance())
+                    .commit()
+                // TODO conditionally put the fragment in the right of a dual-pane layout depending on if right-pane fragment holder is in the xml
+            }
+        })
+
         initRecentlyViewedList()
     }
 
@@ -90,10 +105,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        list_recently_viewed.apply {
-            layoutManager = recentlyViewedListViewManager
-            adapter = recentlyViewedListViewAdapter
-            setHasFixedSize(true)
-        }
+//        list_recently_viewed.apply {
+//            layoutManager = recentlyViewedListViewManager
+//            adapter = recentlyViewedListViewAdapter
+//            setHasFixedSize(true)
+//        }
     }
 }

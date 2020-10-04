@@ -31,11 +31,15 @@ import com.alun.yaku.DictEntryAdapter
 import com.alun.yaku.R
 import com.alun.yaku.models.Result
 import com.alun.yaku.models.SearchResults
+import com.alun.yaku.models.WordDetail
+import com.alun.yaku.viewmodels.EntrySelectedViewModel
 import com.alun.yaku.viewmodels.SearchResultsViewModel
 import kotlinx.android.synthetic.main.fragment_search_results.*
 
 class SearchResultsFragment : Fragment() {
     private val searchResultsViewModel: SearchResultsViewModel by activityViewModels()
+    private val entrySelectedViewModel: EntrySelectedViewModel by activityViewModels()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -69,6 +73,7 @@ class SearchResultsFragment : Fragment() {
                     val resultsAdapter = DictEntryAdapter(matches).apply {
                         clickListener = object : DictEntryAdapter.ClickListener {
                             override fun onClick(position: Int) {
+                                entrySelectedViewModel.entrySelected.postValue(WordDetail(matches[position]))
                                 println(
                                     "SEARCH RESULTS FRAGMENT CLICK LISTENER " + position + "  " + matches[position].toString()
                                 )

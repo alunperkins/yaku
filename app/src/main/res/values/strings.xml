@@ -19,22 +19,38 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Yaku</string>
+
     <string name="search_btn_from_japanese">From Japanese</string>
     <string name="search_btn_from_english">From English</string>
     <string name="search_hint">Enter Kana/Romaji/English</string>
     <string name="search_btn_from_japanese_deinflecting">From Japanese deinflecting</string>
+
     <string name="match_mode_any">any</string>
     <string name="match_mode_exact">exact</string>
     <string name="match_mode_starts_with">starts with</string>
     <string name="match_mode_ends_with">ends with</string>
+
     <string name="search_target_dictionary">Dictionary</string>
     <string name="search_target_examples">Examples</string>
+
     <string name="x">X</string>
+
     <string name="recently_viewed">Recently viewed</string>
+
     <string name="dict_entry_list_item_kanji_then_kana">%1$s - %2$s</string>
     <string name="dict_entry_list_item_kana">%1$s</string>
+
+    <string name="parenthetic_see_also">(see also: %1$s)</string>
+    <string name="parenthetic_see_antonyms">(antonyms: %1$s)</string>
+    <string name="parenthetic_loan_source">(loan from %1$s)</string>
+    <string name="parenthetic_restriction">(%1$s only)</string>
+    <string name="parenthetic_warning">(!)</string>
+    <string name="bullet_1">►</string>
+
     <string name="error">There was an error: %1$s</string>
+
     <string name="searching">Searching</string>
+
     <plurals name="number_of_matches_for_query">
         <item quantity="one">%d match for %2$s</item>
         <item quantity="other">%d matches for %2$s</item>

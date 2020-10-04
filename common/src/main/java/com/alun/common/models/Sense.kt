@@ -66,11 +66,11 @@ data class Sense(
     /**
      * null or non-empty list
      */
-    val loanSource: List<LoanSource>?,
+    val loanSource: List<LoanSource>?, // TODO rename to plural
     /**
      * null or non-empty list
      */
-    val dialect: List<Dialect>?,
+    val dialect: List<Dialect>?, // TODO rename to plural
     /**
      * non-empty list
      */

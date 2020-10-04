@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+    Yaku offline browser of Japanese dictionaries
+    Copyright (C) 2020 Alun Perkins
+
+    This file is part of Yaku.
+
+    Yaku is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Yaku is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<com.google.android.flexbox.FlexboxLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:alignItems="flex_end"
+    app:flexWrap="wrap">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/bullet_1" />
+
+    <TextView
+        android:id="@+id/sense_list_item_poss"
+        style="@style/text_flex_item_optional" />
+
+    <TextView
+        android:id="@+id/sense_list_item_miscs"
+        style="@style/text_flex_item_optional" />
+
+    <TextView
+        android:id="@+id/sense_list_item_fields"
+        style="@style/text_flex_item_optional" />
+
+    <TextView
+        android:id="@+id/sense_list_item_restrs"
+        style="@style/text_flex_item_optional" />
+
+    <TextView
+        android:id="@+id/sense_list_item_infos"
+        style="@style/text_flex_item_optional" />
+
+    <TextView
+        android:id="@+id/sense_list_item_dialects"
+        style="@style/text_flex_item_optional" />
+
+    <TextView
+        android:id="@+id/sense_list_item_loan_sources"
+        style="@style/text_flex_item_optional" />
+
+    <TextView
+        android:id="@+id/sense_list_item_glosses"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="5dp"
+        android:paddingLeft="5dp" />
+
+    <TextView
+        android:id="@+id/sense_list_item_xrefs"
+        style="@style/text_flex_item_optional" />
+
+    <TextView
+        android:id="@+id/sense_list_item_antonyms"
+        style="@style/text_flex_item_optional" />
+
+</com.google.android.flexbox.FlexboxLayout>

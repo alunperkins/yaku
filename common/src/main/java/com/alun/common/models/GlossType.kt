@@ -19,7 +19,7 @@
  */
 package com.alun.common.models
 
-enum class GlossType(val s: String) {
+enum class GlossType(val s/*TODO rename to abbr*/: String) {
     EXPL("expl"),
     FIG("fig"),
     LIT("lit"),

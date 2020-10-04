@@ -19,7 +19,7 @@
  */
 package com.alun.common.models
 
-enum class KanjiInfo(val s: String, val desc: String) {
+enum class KanjiInfo(val s/*TODO rename to abbr*/: String, val desc: String) {
     ATEJI("ateji", "ateji (phonetic) reading"),
     IRREGULAR_KANA("ik", "word containing irregular kana usage"),
     IRREGULAR_KANJI("iK", "word containing irregular kanji usage"),

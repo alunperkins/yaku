@@ -17,24 +17,10 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.common.models
+package com.alun.yaku.models
 
-enum class Dialect(val s/*TODO rename to abbr*/: String, val desc: String) {
-    HOB("hob", "Hokkaido-ben"),
-    KSB("ksb", "Kansai-ben"),
-    KTB("ktb", "Kantou-ben"),
-    KYB("kyb", "Kyoto-ben"),
-    KYU("kyu", "Kyuushuu-ben"),
-    NAB("nab", "Nagano-ben"),
-    OSB("osb", "Osaka-ben"),
-    RKB("rkb", "Ryuukyuu-ben"),
-    THB("thb", "Touhoku-ben"),
-    TSB("tsb", "Tosa-ben"),
-    TSUG("tsug", "Tsugaru-ben"),
-    ;
+import com.alun.common.models.DictEntry
 
-    companion object {
-        private val mapping = values().associateBy(Dialect::desc)
-        fun fromStr(s: String) = mapping[s] ?: error("Look up failed for \"$s\" in Dialect")
-    }
-}
+data class WordDetail(
+    val dictEntry: DictEntry
+)

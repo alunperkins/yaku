@@ -24,42 +24,40 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.alun.common.models.DictEntry
+import com.alun.common.models.Kanji
 
-class DictEntryAdapter(private val entries: List<DictEntry>) :
-    RecyclerView.Adapter<DictEntryAdapter.ViewHolder>() {
+class KanjiAdapter(private val kanjis: List<Kanji>) :
+    RecyclerView.Adapter<KanjiAdapter.ViewHolder>() {
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view)
 
-    interface ClickListener {
-        fun onClick(position: Int)
-    }
-
-    var clickListener: ClickListener? = null
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.dict_entry_list_item, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.kanji_list_item, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val entry = entries[position]
+        val kanji = kanjis[position]
+        holder.view.run {
+            findViewById<TextView>(R.id.kanji_list_item_kanji).text = kanji.str
 
-        val kanaString: String = entry.kanas.joinToString(separator = ", ") { k -> k.str }
-        val kanjiString: String? = entry.kanjis?.joinToString(separator = ", ") { k -> k.str }
-        holder.view.findViewById<TextView>(R.id.deli_japanese).text = when(kanjiString) {
-            null -> holder.view.context.getString(R.string.dict_entry_list_item_kana, kanaString)
-            else -> holder.view.context.getString(R.string.dict_entry_list_item_kanji_then_kana, kanjiString, kanaString)
-        }
-        holder.view.findViewById<TextView>(R.id.deli_english).text =
-            entry.senses.joinToString(separator = ", ") { sense ->
-                sense.glosses.joinToString(separator = "/") { g -> g.str }
+            kanji.infos?.let {
+                findViewById<TextView>(R.id.kanji_list_item_infos).run {
+                    text = it.joinToString(separator = ", ")
+                    visibility = View.VISIBLE
+                }
             }
 
-        holder.view.setOnClickListener { clickListener?.onClick(position) }
+            kanji.priorities?.let {
+                findViewById<TextView>(R.id.kanji_list_item_pris).run {
+                    text = it.joinToString(separator = ", ")
+                    visibility = View.VISIBLE
+                }
+            }
+        }
     }
 
     override fun getItemCount(): Int {
-        return entries.size
+        return kanjis.size
     }
 }

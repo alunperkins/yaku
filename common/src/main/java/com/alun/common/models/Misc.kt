@@ -19,7 +19,7 @@
  */
 package com.alun.common.models
 
-enum class Misc(val s: String, val desc: String) {
+enum class Misc(val s/*TODO rename to abbr*/: String, val desc: String) {
     ABBR("abbr", "abbreviation"),
     ARCH("arch", "archaism"),
     CHN("chn", "children's language"),

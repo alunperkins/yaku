@@ -19,7 +19,7 @@
  */
 package com.alun.common.models
 
-enum class POS(val s: String, val desc: String) {
+enum class POS(val s/*TODO rename to abbr*/: String, val desc: String) {
     ADJ_F("adj-f", "noun or verb acting prenominally"),
     ADJ_I("adj-i", "adjective (keiyoushi)"),
     ADJ_IX("adj-ix", "adjective (keiyoushi) - yoi/ii class"),

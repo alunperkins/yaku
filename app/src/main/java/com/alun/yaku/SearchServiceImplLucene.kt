@@ -49,7 +49,7 @@ class SearchServiceImplLucene(context: Context?) : SearchService {
         return withContext(Dispatchers.IO) {
             if (searcher == null) TODO("handle case where searcher is null because context was null")
 
-            val q: Query = TermQuery(Term(Lang.ENG.threeLetterCode, params.text))
+            val q: Query = TermQuery(Term(Lang.ENG.threeLetterCode, params.text)) // TODO search the actual requested search
             val docs: TopDocs = searcher.search(q, 30)
             val hits = docs.scoreDocs
             // in one line e.g. `searcher.search(TermQuery(Term(Lang.ENG.threeLetterCode, "computer")), 10).scoreDocs.size`

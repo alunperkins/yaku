@@ -19,7 +19,7 @@
  */
 package com.alun.common.models
 
-enum class ReadingInfo(val s: String, val desc: String) {
+enum class ReadingInfo(val s/*TODO rename to abbr*/: String, val desc: String) {
     IRREGULAR_KANA("ik", "word containing irregular kana usage"),
     OUT_DATED_KANA("ok", "out-dated or obsolete kana usage"),
     GIKUN("gikun", "gikun (meaning as reading) or jukujikun (special kanji reading)"),

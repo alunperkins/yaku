@@ -81,9 +81,9 @@ class DictionaryProvider {
         }
     }
 
-    private fun assertLangsAreInGroups (senses: List<SenseRaw>) {
+    private fun assertLangsAreInGroups(senses: List<SenseRaw>) {
         val langsAlreadySeen = mutableSetOf<Lang>()
-        var prevLang: Lang?  = null
+        var prevLang: Lang? = null
         for (sense in senses) {
             val lang = getLang(sense)
             val isNewLangGroup = lang != prevLang

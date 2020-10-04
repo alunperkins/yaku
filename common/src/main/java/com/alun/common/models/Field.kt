@@ -19,7 +19,7 @@
  */
 package com.alun.common.models
 
-enum class Field(val s: String, val desc: String) {
+enum class Field(val s/*TODO rename to abbr*/: String, val desc: String) {
     ANAT("anat", "anatomical term"),
     ARCHIT("archit", "architecture term"),
     ASTRON("astron", "astronomy, etc. term"),
