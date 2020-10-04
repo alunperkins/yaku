@@ -19,7 +19,7 @@
  */
 package com.alun.common.models
 
-enum class Field(val s/*TODO rename to abbr*/: String, val desc: String) {
+enum class Field(val abbr: String, val desc: String) {
     ANAT("anat", "anatomical term"),
     ARCHIT("archit", "architecture term"),
     ASTRON("astron", "astronomy, etc. term"),
@@ -55,6 +55,6 @@ enum class Field(val s/*TODO rename to abbr*/: String, val desc: String) {
 
     companion object {
         private val mapping = values().associateBy(Field::desc)
-        fun fromStr(s: String) = mapping[s] ?: error("Look up failed for \"$s\" in Field")
+        fun fromStr(desc: String) = mapping[desc] ?: error("Look up failed for \"$desc\" in Field")
     }
 }

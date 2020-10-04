@@ -19,13 +19,13 @@
  */
 package com.alun.common.models
 
-enum class LoanType(val s: String) {
+enum class LoanType(val desc: String) {
     FULL("full"),
     PART("part"),
     ;
 
     companion object {
-        private val mapping = values().associateBy(LoanType::s)
-        fun fromStr(s: String) = mapping[s] ?: error("Look up failed for \"$s\" in LoanType")
+        private val mapping = values().associateBy(LoanType::desc)
+        fun fromStr(desc: String) = mapping[desc] ?: error("Look up failed for \"$desc\" in LoanType")
     }
 }

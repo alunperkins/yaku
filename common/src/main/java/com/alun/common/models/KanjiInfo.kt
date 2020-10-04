@@ -19,7 +19,7 @@
  */
 package com.alun.common.models
 
-enum class KanjiInfo(val s/*TODO rename to abbr*/: String, val desc: String) {
+enum class KanjiInfo(val abbr: String, val desc: String) {
     ATEJI("ateji", "ateji (phonetic) reading"),
     IRREGULAR_KANA("ik", "word containing irregular kana usage"),
     IRREGULAR_KANJI("iK", "word containing irregular kanji usage"),
@@ -29,6 +29,6 @@ enum class KanjiInfo(val s/*TODO rename to abbr*/: String, val desc: String) {
 
     companion object {
         private val mapping = values().associateBy(KanjiInfo::desc)
-        fun fromStr(s: String) = mapping[s] ?: error("Look up failed for \"$s\" in KanjiInfo")
+        fun fromStr(desc: String) = mapping[desc] ?: error("Look up failed for \"$desc\" in KanjiInfo")
     }
 }

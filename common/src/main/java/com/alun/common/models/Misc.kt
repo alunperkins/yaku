@@ -19,7 +19,7 @@
  */
 package com.alun.common.models
 
-enum class Misc(val s/*TODO rename to abbr*/: String, val desc: String) {
+enum class Misc(val abbr: String, val desc: String) {
     ABBR("abbr", "abbreviation"),
     ARCH("arch", "archaism"),
     CHN("chn", "children's language"),
@@ -57,6 +57,6 @@ enum class Misc(val s/*TODO rename to abbr*/: String, val desc: String) {
 
     companion object {
         private val mapping = values().associateBy(Misc::desc)
-        fun fromStr(s: String) = mapping[s] ?: error("Look up failed for \"$s\" in Misc")
+        fun fromStr(desc: String) = mapping[desc] ?: error("Look up failed for \"$desc\" in Misc")
     }
 }

@@ -57,7 +57,7 @@ class KanaAdapter(private val kanas: List<Kana>) :
 
             kana.infos?.let {
                 findViewById<TextView>(R.id.kana_list_item_infos).run {
-                    text = it.joinToString(separator = ",") { it.s }
+                    text = it.joinToString(separator = ",") { it.abbr }
                     visibility = View.VISIBLE
                 }
             }

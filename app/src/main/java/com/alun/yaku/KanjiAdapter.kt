@@ -43,14 +43,14 @@ class KanjiAdapter(private val kanjis: List<Kanji>) :
 
             kanji.infos?.let {
                 findViewById<TextView>(R.id.kanji_list_item_infos).run {
-                    text = it.joinToString(separator = ", ")
+                    text = it.joinToString(separator = ", ") { it.abbr }
                     visibility = View.VISIBLE
                 }
             }
 
             kanji.priorities?.let {
                 findViewById<TextView>(R.id.kanji_list_item_pris).run {
-                    text = it.joinToString(separator = ", ")
+                    text = it.joinToString(separator = ", ") { it.s }
                     visibility = View.VISIBLE
                 }
             }

@@ -19,7 +19,7 @@
  */
 package com.alun.common.models
 
-enum class POS(val s/*TODO rename to abbr*/: String, val desc: String) {
+enum class POS(val abbr: String, val desc: String) {
     ADJ_F("adj-f", "noun or verb acting prenominally"),
     ADJ_I("adj-i", "adjective (keiyoushi)"),
     ADJ_IX("adj-ix", "adjective (keiyoushi) - yoi/ii class"),
@@ -108,6 +108,6 @@ enum class POS(val s/*TODO rename to abbr*/: String, val desc: String) {
 
     companion object {
         private val mapping = values().associateBy(POS::desc)
-        fun fromStr(s: String) = mapping[s] ?: error("Look up failed for \"$s\" in POS")
+        fun fromStr(desc: String) = mapping[desc] ?: error("Look up failed for \"$desc\" in POS")
     }
 }

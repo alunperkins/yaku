@@ -19,14 +19,14 @@
  */
 package com.alun.common.models
 
-enum class GlossType(val s/*TODO rename to abbr*/: String) {
+enum class GlossType(val abbr: String) {
     EXPL("expl"),
     FIG("fig"),
     LIT("lit"),
     ;
 
     companion object {
-        private val mapping = values().associateBy(GlossType::s)
-        fun fromStr(s: String) = mapping[s] ?: error("Look up failed for \"$s\" in GlossType")
+        private val mapping = values().associateBy(GlossType::abbr)
+        fun fromStr(abbr: String) = mapping[abbr] ?: error("Look up failed for \"$abbr\" in GlossType")
     }
 }

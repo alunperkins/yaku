@@ -19,7 +19,7 @@
  */
 package com.alun.common.models
 
-enum class Dialect(val s/*TODO rename to abbr*/: String, val desc: String) {
+enum class Dialect(val abbr: String, val desc: String) {
     HOB("hob", "Hokkaido-ben"),
     KSB("ksb", "Kansai-ben"),
     KTB("ktb", "Kantou-ben"),
@@ -35,6 +35,6 @@ enum class Dialect(val s/*TODO rename to abbr*/: String, val desc: String) {
 
     companion object {
         private val mapping = values().associateBy(Dialect::desc)
-        fun fromStr(s: String) = mapping[s] ?: error("Look up failed for \"$s\" in Dialect")
+        fun fromStr(desc: String) = mapping[desc] ?: error("Look up failed for \"$desc\" in Dialect")
     }
 }

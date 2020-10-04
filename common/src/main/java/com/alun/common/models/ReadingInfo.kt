@@ -19,7 +19,7 @@
  */
 package com.alun.common.models
 
-enum class ReadingInfo(val s/*TODO rename to abbr*/: String, val desc: String) {
+enum class ReadingInfo(val abbr: String, val desc: String) {
     IRREGULAR_KANA("ik", "word containing irregular kana usage"),
     OUT_DATED_KANA("ok", "out-dated or obsolete kana usage"),
     GIKUN("gikun", "gikun (meaning as reading) or jukujikun (special kanji reading)"),
@@ -27,6 +27,6 @@ enum class ReadingInfo(val s/*TODO rename to abbr*/: String, val desc: String) {
 
     companion object {
         private val mapping = values().associateBy(ReadingInfo::desc)
-        fun fromStr(s: String) = mapping[s] ?: error("Look up failed for \"$s\" in ReadingInfo")
+        fun fromStr(desc: String) = mapping[desc] ?: error("Look up failed for \"$desc\" in ReadingInfo")
     }
 }

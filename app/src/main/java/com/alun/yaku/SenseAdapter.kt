@@ -42,21 +42,21 @@ class SenseAdapter(private val senses: List<Sense>) :
         holder.view.run {
             sense.pos?.let {
                 findViewById<TextView>(R.id.sense_list_item_poss).run {
-                    text = it.joinToString(separator = ", ") { it.s }
+                    text = it.joinToString(separator = ", ") { it.abbr }
                     visibility = View.VISIBLE
                 }
             }
 
             sense.miscs?.let {
                 findViewById<TextView>(R.id.sense_list_item_miscs).run {
-                    text = it.joinToString(separator = ", ") { it.s }
+                    text = it.joinToString(separator = ", ") { it.abbr }
                     visibility = View.VISIBLE
                 }
             }
 
             sense.fields?.let {
                 findViewById<TextView>(R.id.sense_list_item_fields).run {
-                    text = it.joinToString(separator = ", ") { it.s }
+                    text = it.joinToString(separator = ", ") { it.abbr }
                     visibility = View.VISIBLE
                 }
             }
@@ -81,14 +81,14 @@ class SenseAdapter(private val senses: List<Sense>) :
                 }
             }
 
-            sense.dialect?.let {
+            sense.dialects?.let {
                 findViewById<TextView>(R.id.sense_list_item_dialects).run {
                     text = it.joinToString(separator = ", ") { it.desc }
                     visibility = View.VISIBLE
                 }
             }
 
-            sense.loanSource?.let {
+            sense.loanSources?.let {
                 findViewById<TextView>(R.id.sense_list_item_loan_sources).run {
                     text = context.getString(R.string.parenthetic_loan_source,
                         it.joinToString(separator = ", ") { it.lang.threeLetterCode })
@@ -97,7 +97,7 @@ class SenseAdapter(private val senses: List<Sense>) :
             }
 
             findViewById<TextView>(R.id.sense_list_item_glosses).text =
-                sense.glosses.joinToString(separator = ", ") { "${it.str}${if (it.type == null) "" else " (" + it.type!!.s + ")"}" } // TODO visual different between the `str` text and the `type` text
+                sense.glosses.joinToString(separator = ", ") { "${it.str}${if (it.type == null) "" else " (" + it.type!!.abbr + ")"}" } // TODO visual different between the `str` text and the `type` text
 
             sense.xrefs?.let {
                 findViewById<TextView>(R.id.sense_list_item_xrefs).run {
