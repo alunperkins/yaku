@@ -26,11 +26,15 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.alun.common.models.Reference
 import com.alun.common.models.Sense
+import com.alun.yaku.Utils.Companion.goneIfNull
+import kotlinx.android.synthetic.main.sense_list_item.view.*
 
 class SenseAdapter(private val senses: List<Sense>) :
     RecyclerView.Adapter<SenseAdapter.ViewHolder>() {
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view)
+
+    private var expandedPosition: Int? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.sense_list_item, parent, false)
@@ -39,77 +43,153 @@ class SenseAdapter(private val senses: List<Sense>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val sense = senses[position]
+        val expanded = expandedPosition == position
+
         holder.view.run {
-            sense.pos?.let {
-                findViewById<TextView>(R.id.sense_list_item_poss).run {
-                    text = it.joinToString(separator = ", ") { it.abbr }
-                    visibility = View.VISIBLE
+            setOnClickListener {
+                when (expandedPosition) {
+                    null -> {
+                        expandedPosition = position
+                        notifyItemChanged(position)
+                    }
+                    position -> {
+                        expandedPosition = null
+                        notifyItemChanged(position)
+                    }
+                    else -> {
+                        val expandedPositionPrev = expandedPosition!!
+                        expandedPosition = position
+                        notifyItemChanged(expandedPositionPrev)
+                        notifyItemChanged(position)
+                    }
                 }
             }
 
-            sense.miscs?.let {
-                findViewById<TextView>(R.id.sense_list_item_miscs).run {
-                    text = it.joinToString(separator = ", ") { it.abbr }
-                    visibility = View.VISIBLE
-                }
-            }
+            sense_list_item_layout_collapsed.visibility = if (expanded) View.GONE else View.VISIBLE
+            sense_list_item_layout_expanded.visibility = if (expanded) View.VISIBLE else View.GONE
+            sense_list_item_arrowhead.text = if (expanded) "\u02C5" else "\u02C3"
 
-            sense.fields?.let {
-                findViewById<TextView>(R.id.sense_list_item_fields).run {
-                    text = it.joinToString(separator = ", ") { it.abbr }
-                    visibility = View.VISIBLE
+            if (expanded) {
+                findViewById<TextView>(R.id.sense_list_item_verbose_poss).run {
+                    text = sense.pos?.joinToString(separator = "\n") { "${it.abbr}: ${it.desc}" }
+                    visibility = goneIfNull(sense.pos)
                 }
-            }
 
-            val restrictions: List<String>? = listOf(sense.stagks ?: listOf(), sense.stagrs ?: listOf())
-                .flatten()
-                .ifEmpty { null }
-            if (restrictions != null)
-                findViewById<TextView>(R.id.sense_list_item_restrs).run {
-                    text =
+                findViewById<TextView>(R.id.sense_list_item_verbose_miscs).run {
+                    text = sense.miscs?.joinToString(separator = "\n") { "${it.abbr}: ${it.desc}" }
+                    visibility = goneIfNull(sense.miscs)
+                }
+
+                findViewById<TextView>(R.id.sense_list_item_verbose_fields).run {
+                    text = sense.fields?.joinToString(separator = "\n") { "${it.abbr}: ${it.desc}" }
+                    visibility = goneIfNull(sense.fields)
+                }
+
+                val restrictions: List<String>? = listOf(sense.stagks ?: listOf(), sense.stagrs ?: listOf())
+                    .flatten()
+                    .ifEmpty { null }
+                findViewById<TextView>(R.id.sense_list_item_verbose_restrs).run {
+                    text = restrictions?.let {
                         context.getString(
                             R.string.parenthetic_restriction,
-                            restrictions.joinToString(separator = ", ")
+                            it.joinToString(separator = ", ")
                         )
-                    visibility = View.VISIBLE
+                    }
+                    visibility = goneIfNull(restrictions)
                 }
 
-            sense.infos?.let {
+                findViewById<TextView>(R.id.sense_list_item_verbose_infos).run {
+                    text = sense.infos?.joinToString(separator = "\n")
+                    visibility = goneIfNull(sense.infos)
+                }
+
+                findViewById<TextView>(R.id.sense_list_item_verbose_dialects).run {
+                    text = sense.dialects?.joinToString(separator = "\n") { "${it.abbr}: ${it.desc}" }
+                    visibility = goneIfNull(sense.dialects)
+                }
+
+                findViewById<TextView>(R.id.sense_list_item_verbose_loan_sources).run {
+                    text = sense.loanSources?.let {
+                        context.getString(R.string.parenthetic_loan_source,
+                            it.joinToString(separator = ", ") { it.lang.threeLetterCode })
+                    }
+                    visibility = goneIfNull(sense.loanSources)
+                }
+
+                findViewById<TextView>(R.id.sense_list_item_verbose_glosses).text =
+                    sense.glosses.joinToString(separator = "\n") { "${it.str}${if (it.type == null) "" else " (" + it.type!!.abbr + ")"}" } // TODO visual different between the `str` text and the `type` text
+
+                findViewById<TextView>(R.id.sense_list_item_verbose_xrefs).run {
+                    text = sense.xrefs?.let { context.getString(R.string.parenthetic_see_also, referencesString(it)) }
+                    visibility = goneIfNull(sense.xrefs)
+                }
+
+                findViewById<TextView>(R.id.sense_list_item_verbose_antonyms).run {
+                    text = sense.antonyms?.let {
+                        context.getString(R.string.parenthetic_see_antonyms, referencesString(it))
+                    }
+                    visibility = goneIfNull(sense.antonyms)
+                }
+            } else {
+                findViewById<TextView>(R.id.sense_list_item_poss).run {
+                    text = sense.pos?.joinToString(separator = ", ") { it.abbr }
+                    visibility = goneIfNull(sense.pos)
+                }
+
+                findViewById<TextView>(R.id.sense_list_item_miscs).run {
+                    text = sense.miscs?.joinToString(separator = ", ") { it.abbr }
+                    visibility = goneIfNull(sense.miscs)
+                }
+
+                findViewById<TextView>(R.id.sense_list_item_fields).run {
+                    text = sense.fields?.joinToString(separator = ", ") { it.abbr }
+                    visibility = goneIfNull(sense.fields)
+                }
+
+                val restrictions: List<String>? = listOf(sense.stagks ?: listOf(), sense.stagrs ?: listOf())
+                    .flatten()
+                    .ifEmpty { null }
+                findViewById<TextView>(R.id.sense_list_item_restrs).run {
+                    text = restrictions?.let {
+                        context.getString(
+                            R.string.parenthetic_restriction,
+                            it.joinToString(separator = ", ")
+                        )
+                    }
+                    visibility = goneIfNull(restrictions)
+                }
+
                 findViewById<TextView>(R.id.sense_list_item_infos).run {
-                    text = it.joinToString(separator = ", ")
-                    visibility = View.VISIBLE
+                    text = sense.infos?.joinToString(separator = ", ")
+                    visibility = goneIfNull(sense.infos)
                 }
-            }
 
-            sense.dialects?.let {
                 findViewById<TextView>(R.id.sense_list_item_dialects).run {
-                    text = it.joinToString(separator = ", ") { it.desc }
-                    visibility = View.VISIBLE
+                    text = sense.dialects?.joinToString(separator = ", ") { it.abbr }
+                    visibility = goneIfNull(sense.dialects)
                 }
-            }
 
-            sense.loanSources?.let {
                 findViewById<TextView>(R.id.sense_list_item_loan_sources).run {
-                    text = context.getString(R.string.parenthetic_loan_source,
-                        it.joinToString(separator = ", ") { it.lang.threeLetterCode })
-                    visibility = View.VISIBLE
+                    text = sense.loanSources?.let {
+                        context.getString(R.string.parenthetic_loan_source,
+                            it.joinToString(separator = ", ") { it.lang.threeLetterCode })
+                    }
+                    visibility = goneIfNull(sense.loanSources)
                 }
-            }
 
-            findViewById<TextView>(R.id.sense_list_item_glosses).text =
-                sense.glosses.joinToString(separator = ", ") { "${it.str}${if (it.type == null) "" else " (" + it.type!!.abbr + ")"}" } // TODO visual different between the `str` text and the `type` text
+                findViewById<TextView>(R.id.sense_list_item_glosses).text =
+                    sense.glosses.joinToString(separator = ", ") { "${it.str}${if (it.type == null) "" else " (" + it.type!!.abbr + ")"}" } // TODO visual different between the `str` text and the `type` text
 
-            sense.xrefs?.let {
                 findViewById<TextView>(R.id.sense_list_item_xrefs).run {
-                    text = context.getString(R.string.parenthetic_see_also, referencesString(it))
-                    visibility = View.VISIBLE
+                    text = sense.xrefs?.let { context.getString(R.string.parenthetic_see_also, referencesString(it)) }
+                    visibility = goneIfNull(sense.xrefs)
                 }
-            }
 
-            sense.antonyms?.let {
                 findViewById<TextView>(R.id.sense_list_item_antonyms).run {
-                    text = context.getString(R.string.parenthetic_see_antonyms, referencesString(it))
-                    visibility = View.VISIBLE
+                    text = sense.antonyms?.let {
+                        context.getString(R.string.parenthetic_see_antonyms, referencesString(it))
+                    }
+                    visibility = goneIfNull(sense.antonyms)
                 }
             }
         }

@@ -27,7 +27,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.alun.common.models.Lang
 import com.alun.yaku.KanaAdapter
 import com.alun.yaku.KanjiAdapter
 import com.alun.yaku.R

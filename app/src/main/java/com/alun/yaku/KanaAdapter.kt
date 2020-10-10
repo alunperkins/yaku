@@ -25,6 +25,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.alun.common.models.Kana
+import com.alun.yaku.Utils.Companion.goneIfNull
 
 class KanaAdapter(private val kanas: List<Kana>) :
     RecyclerView.Adapter<KanaAdapter.ViewHolder>() {
@@ -41,11 +42,14 @@ class KanaAdapter(private val kanas: List<Kana>) :
         holder.view.run {
             findViewById<TextView>(R.id.kana_list_item_kana).text = kana.str
 
-            kana.onlyForKanjis?.let {
-                findViewById<TextView>(R.id.kana_list_item_only_kanjis).run {
-                    text = context.getString(R.string.parenthetic_restriction, it.joinToString(", "))
-                    visibility = View.VISIBLE
+            findViewById<TextView>(R.id.kana_list_item_only_kanjis).run {
+                text = kana.onlyForKanjis?.let {
+                    context.getString(
+                        R.string.parenthetic_restriction,
+                        it.joinToString(", ")
+                    )
                 }
+                visibility = goneIfNull(kana.onlyForKanjis)
             }
 
             when (kana.noKanji) {
@@ -53,20 +57,20 @@ class KanaAdapter(private val kanas: List<Kana>) :
                     text = context.getString(R.string.parenthetic_warning) // or could use "⚠" ?
                     visibility = View.VISIBLE
                 }
-            }
-
-            kana.infos?.let {
-                findViewById<TextView>(R.id.kana_list_item_infos).run {
-                    text = it.joinToString(separator = ",") { it.abbr }
-                    visibility = View.VISIBLE
+                else -> findViewById<TextView>(R.id.kana_list_item_nokanji).run {
+                    text = null
+                    visibility = View.GONE
                 }
             }
 
-            kana.priorities?.let {
-                findViewById<TextView>(R.id.kana_list_item_pris).run {
-                    text = it.joinToString(separator = ",") { it.s }
-                    visibility = View.VISIBLE
-                }
+            findViewById<TextView>(R.id.kana_list_item_infos).run {
+                text = kana.infos?.let { it.joinToString(separator = ",") { it.abbr } }
+                visibility = goneIfNull(kana.infos)
+            }
+
+            findViewById<TextView>(R.id.kana_list_item_pris).run {
+                text = kana.priorities?.let { it.joinToString(separator = ",") { it.s } }
+                visibility = goneIfNull(kana.priorities)
             }
         }
     }

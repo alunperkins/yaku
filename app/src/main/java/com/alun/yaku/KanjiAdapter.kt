@@ -25,6 +25,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.alun.common.models.Kanji
+import com.alun.yaku.Utils.Companion.goneIfNull
 
 class KanjiAdapter(private val kanjis: List<Kanji>) :
     RecyclerView.Adapter<KanjiAdapter.ViewHolder>() {
@@ -38,21 +39,18 @@ class KanjiAdapter(private val kanjis: List<Kanji>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val kanji = kanjis[position]
+        
         holder.view.run {
             findViewById<TextView>(R.id.kanji_list_item_kanji).text = kanji.str
 
-            kanji.infos?.let {
-                findViewById<TextView>(R.id.kanji_list_item_infos).run {
-                    text = it.joinToString(separator = ", ") { it.abbr }
-                    visibility = View.VISIBLE
-                }
+            findViewById<TextView>(R.id.kanji_list_item_infos).run {
+                text = kanji.infos?.let { it.joinToString(separator = ", ") { it.abbr } }
+                visibility = goneIfNull(kanji.infos)
             }
 
-            kanji.priorities?.let {
-                findViewById<TextView>(R.id.kanji_list_item_pris).run {
-                    text = it.joinToString(separator = ", ") { it.s }
-                    visibility = View.VISIBLE
-                }
+            findViewById<TextView>(R.id.kanji_list_item_pris).run {
+                text = kanji.priorities?.let { it.joinToString(separator = ", ") { it.s } }
+                visibility = goneIfNull(kanji.priorities)
             }
         }
     }

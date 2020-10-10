@@ -32,7 +32,6 @@ import com.alun.yaku.models.SearchParams
 import com.alun.yaku.models.WordDetail
 import com.alun.yaku.viewmodels.EntrySelectedViewModel
 import com.alun.yaku.viewmodels.SearchResultsViewModel
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var recentlyViewedListViewAdapter: DictEntryAdapter

@@ -41,10 +41,6 @@ class SearchServiceImplLucene(context: Context?) : SearchService {
     private val json = Json(JsonConfiguration.Stable)
     private val serializer = DictEntry.serializer()
 
-//            context?.getExternalFilesDir(null) // /storage/emulated/0/Android/data/com.alun.yaku/files
-//            context?.getExternalFilesDir("myString") // /storage/emulated/0/Android/data/com.alun.yaku/files/myString
-//            context?.obbDir // /storage/emulated/0/Android/obb/com.alun.yaku
-
     override suspend fun getResults(params: SearchParams): List<DictEntry> {
         return withContext(Dispatchers.IO) {
             if (searcher == null) TODO("handle case where searcher is null because context was null")
