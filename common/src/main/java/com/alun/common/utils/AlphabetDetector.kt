@@ -3,7 +3,7 @@ package com.alun.common.utils
 class AlphabetDetector {
     companion object {
         fun isKana(str: String): Boolean {
-            return str.toCharArray().all { c -> isKana(c) };
+            return str.toCharArray().all { c -> isKana(c) }
         }
 
         fun isKanji(str: String): Boolean {
@@ -11,7 +11,7 @@ class AlphabetDetector {
         }
 
         fun isLatin(str: String): Boolean {
-            TODO()
+            return str.matches(Regex("[a-zA-Z0-9]*"))
         }
 
         private fun isKana(c: Char): Boolean {
