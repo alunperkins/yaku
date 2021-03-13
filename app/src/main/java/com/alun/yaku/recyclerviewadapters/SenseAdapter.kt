@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.yaku
+package com.alun.yaku.recyclerviewadapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -26,6 +26,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.alun.common.models.Reference
 import com.alun.common.models.Sense
+import com.alun.yaku.R
 import com.alun.yaku.Utils.Companion.goneIfNull
 import kotlinx.android.synthetic.main.sense_list_item.view.*
 
@@ -110,7 +111,8 @@ class SenseAdapter(private val senses: List<Sense>) :
 
                 findViewById<TextView>(R.id.sense_list_item_verbose_loan_sources).run {
                     text = sense.loanSources?.let {
-                        context.getString(R.string.parenthetic_loan_source,
+                        context.getString(
+                            R.string.parenthetic_loan_source,
                             it.joinToString(separator = ", ") { it.lang.threeLetterCode })
                     }
                     visibility = goneIfNull(sense.loanSources)
@@ -171,7 +173,8 @@ class SenseAdapter(private val senses: List<Sense>) :
 
                 findViewById<TextView>(R.id.sense_list_item_loan_sources).run {
                     text = sense.loanSources?.let {
-                        context.getString(R.string.parenthetic_loan_source,
+                        context.getString(
+                            R.string.parenthetic_loan_source,
                             it.joinToString(separator = ", ") { it.lang.threeLetterCode })
                     }
                     visibility = goneIfNull(sense.loanSources)

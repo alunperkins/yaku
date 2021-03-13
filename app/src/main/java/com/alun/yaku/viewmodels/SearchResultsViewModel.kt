@@ -25,8 +25,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alun.common.models.DictEntry
 import com.alun.common.models.Lang
-import com.alun.yaku.SearchService
-import com.alun.yaku.SearchServiceImplLucene
+import com.alun.yaku.services.SearchService
+import com.alun.yaku.services.SearchServiceImplLucene
 import com.alun.yaku.models.Result
 import com.alun.yaku.models.SearchParams
 import com.alun.yaku.models.SearchResults

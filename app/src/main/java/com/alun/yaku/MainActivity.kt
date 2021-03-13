@@ -30,6 +30,7 @@ import com.alun.yaku.fragments.SearchResultsFragment
 import com.alun.yaku.fragments.WordDetailFragment
 import com.alun.yaku.models.SearchParams
 import com.alun.yaku.models.WordDetail
+import com.alun.yaku.recyclerviewadapters.DictEntryAdapter
 import com.alun.yaku.viewmodels.EntrySelectedViewModel
 import com.alun.yaku.viewmodels.SearchResultsViewModel
 

@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.yaku
+package com.alun.yaku.services
 
 import android.content.Context
 import com.alun.common.models.DictEntry
@@ -41,8 +41,13 @@ class SearchServiceImplLucene(context: Context?) : SearchService {
     private val json = Json(JsonConfiguration.Stable)
     private val serializer = DictEntry.serializer()
 
+//            context?.getExternalFilesDir(null) // /storage/emulated/0/Android/data/com.alun.yaku/files
+//            context?.getExternalFilesDir("myString") // /storage/emulated/0/Android/data/com.alun.yaku/files/myString
+//            context?.obbDir // /storage/emulated/0/Android/obb/com.alun.yaku
+
     override suspend fun getResults(params: SearchParams): List<DictEntry> {
         return withContext(Dispatchers.IO) {
+            val t1 = System.currentTimeMillis()
             if (searcher == null) TODO("handle case where searcher is null because context was null")
 
             val q: Query = TermQuery(Term(Lang.ENG.threeLetterCode, params.text)) // TODO search the actual requested search
@@ -56,6 +61,7 @@ class SearchServiceImplLucene(context: Context?) : SearchService {
                 val deserialized = json.parse(serializer, serialized)
                 deserialized
             }
+            println("==== SearchServiceImplLucene::getResults::withContext Searched in " + (System.currentTimeMillis() - t1) + " wall clock milliseconds")
             retval
         }
     }

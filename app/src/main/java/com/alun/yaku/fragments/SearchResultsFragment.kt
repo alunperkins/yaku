@@ -27,7 +27,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.alun.yaku.DictEntryAdapter
+import com.alun.yaku.recyclerviewadapters.DictEntryAdapter
 import com.alun.yaku.R
 import com.alun.yaku.models.Result
 import com.alun.yaku.models.SearchResults

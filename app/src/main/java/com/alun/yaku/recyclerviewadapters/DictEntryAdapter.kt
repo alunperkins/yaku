@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.yaku
+package com.alun.yaku.recyclerviewadapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -25,6 +25,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.alun.common.models.DictEntry
+import com.alun.yaku.R
 
 class DictEntryAdapter(private val entries: List<DictEntry>) :
     RecyclerView.Adapter<DictEntryAdapter.ViewHolder>() {

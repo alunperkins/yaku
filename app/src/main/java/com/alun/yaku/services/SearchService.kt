@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with Yaku.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.alun.yaku
+package com.alun.yaku.services
 
 import com.alun.common.models.DictEntry
 import com.alun.yaku.models.SearchParams
