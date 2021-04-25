@@ -27,11 +27,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.alun.yaku.recyclerviewadapters.DictEntryAdapter
 import com.alun.yaku.R
 import com.alun.yaku.models.Result
 import com.alun.yaku.models.SearchResults
 import com.alun.yaku.models.WordDetail
+import com.alun.yaku.recyclerviewadapters.DictEntryAdapter
 import com.alun.yaku.viewmodels.EntrySelectedViewModel
 import com.alun.yaku.viewmodels.SearchResultsViewModel
 import kotlinx.android.synthetic.main.fragment_search_results.*
@@ -82,8 +82,11 @@ class SearchResultsFragment : Fragment() {
                     }
                     search_results.swapAdapter(resultsAdapter, true)
                 }
-                is Result.Error -> search_results_status_text.text =
-                    resources.getString(R.string.error, result.exception.localizedMessage)
+                is Result.Failure -> {
+                    result.throwable.printStackTrace()
+                    search_results_status_text.text =
+                        resources.getString(R.string.error, result.throwable.localizedMessage)
+                }
             }
         })
     }

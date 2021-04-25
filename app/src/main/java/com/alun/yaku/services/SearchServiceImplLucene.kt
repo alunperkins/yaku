@@ -37,7 +37,7 @@ import org.apache.lucene.store.Directory
 import org.apache.lucene.store.FSDirectory
 
 class SearchServiceImplLucene(context: Context?) : SearchService {
-    private val searcher = context?.let { IndexSearcher(DirectoryReader.open(getDirectory(it))) }
+    private val searcher = context?.let { IndexSearcher(DirectoryReader.open(getDirectory(it))) } // TODO handle org.apache.lucene.index.IndexNotFoundException
     private val json = Json(JsonConfiguration.Stable)
     private val serializer = DictEntry.serializer()
 

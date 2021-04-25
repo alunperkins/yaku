@@ -27,11 +27,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.alun.yaku.R
+import com.alun.yaku.models.WordDetail
 import com.alun.yaku.recyclerviewadapters.KanaAdapter
 import com.alun.yaku.recyclerviewadapters.KanjiAdapter
-import com.alun.yaku.R
 import com.alun.yaku.recyclerviewadapters.SenseAdapter
-import com.alun.yaku.models.WordDetail
 import com.alun.yaku.viewmodels.EntrySelectedViewModel
 import kotlinx.android.synthetic.main.fragment_word_detail.*
 
@@ -78,6 +78,6 @@ class WordDetailFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = WordDetailFragment()
+        fun newInstance() = WordDetailFragment() // TODO the constructor should take a WordDetail PARAMETER instead of the object OBSERVING the entrySelectedViewModel
     }
 }

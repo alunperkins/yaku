@@ -21,4 +21,7 @@ package com.alun.yaku.models
 
 import com.alun.common.models.DictEntry
 
-data class SearchResults(val query: SearchParams, val result: Result<List<DictEntry>>)
+data class SearchResults(
+    val query: SearchParams,
+    val result: Result<List<DictEntry>>
+)

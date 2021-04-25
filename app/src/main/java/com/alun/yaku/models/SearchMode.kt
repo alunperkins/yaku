@@ -20,7 +20,7 @@
 package com.alun.yaku.models
 
 enum class SearchMode { // TODO rename
-    FROM_ENGLISH,
+    FROM_ENGLISH, // TODO rename to TO_JAPANESE
     FROM_JAPANESE,
     FROM_JAPANESE_DEINFLECTED,
 }

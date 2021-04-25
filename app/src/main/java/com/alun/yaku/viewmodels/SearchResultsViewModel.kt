@@ -42,14 +42,14 @@ class SearchResultsViewModel() : ViewModel() {
      * gets search results, filtering to the target lang only
      */
     fun search(context: Context?, params: SearchParams) {
-        executedSearch.postValue(params)
+        executedSearch.postValue(params) // TODO should we results.postValue(null) at this point, since otherwise results will be stale w.r.t. executedSearch?
         val searchService: SearchService = SearchServiceImplLucene(context)
         viewModelScope.launch {
             val searchResult = try {
                 val matchesForUsersLanguage = searchInTargetLang(searchService, params)
                 Result.Success(matchesForUsersLanguage)
-            } catch (e: Exception) {
-                Result.Error(e)
+            } catch (throwable: Throwable) {
+                Result.Failure(throwable)
             }
             results.postValue(SearchResults(params, searchResult))
         }

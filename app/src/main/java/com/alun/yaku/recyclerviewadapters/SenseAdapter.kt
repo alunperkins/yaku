@@ -44,7 +44,7 @@ class SenseAdapter(private val senses: List<Sense>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val sense = senses[position]
-        val expanded = expandedPosition == position
+        val expanded = expandedPosition == position // TODO rename to isExpanded
 
         holder.view.run {
             setOnClickListener {

@@ -24,7 +24,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class SearchParams(
-    val text: String,
+    val text: String, // TODO change SearchParams to have a LIST of texts to search in an OR fashion
     val searchMode: SearchMode,
     val matchMode: MatchMode,
     val searchTarget: SearchTarget
