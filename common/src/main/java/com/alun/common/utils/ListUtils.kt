@@ -19,8 +19,6 @@
  */
 package com.alun.common.utils
 
-import java.lang.Error
-
 class ListUtils {
     companion object {
         /**

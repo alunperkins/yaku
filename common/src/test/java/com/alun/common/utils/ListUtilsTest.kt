@@ -19,7 +19,7 @@
  */
 package com.alun.common.utils
 
-import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 internal class ListUtilsTest {
@@ -27,7 +27,7 @@ internal class ListUtilsTest {
     fun shouldReturnEmptyListForEmptyList() {
         val expected = listOf<List<String>>()
         val actual = ListUtils.chooseFromEachList(listOf<List<String>>())
-        Assert.assertEquals(expected, actual)
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -39,7 +39,7 @@ internal class ListUtilsTest {
             listOf("Morning.")
         )
         val actual = ListUtils.chooseFromEachList(listOf(optionsForFirstElement))
-        Assert.assertEquals(expected, actual)
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -52,7 +52,7 @@ internal class ListUtilsTest {
             listOf("A ", "cat ", "was ", "eating.")
         )
         val allPossibleSentencesActual = ListUtils.chooseFromEachList(listOf(optionsForFirstElement, optionsForSecondElement, optionsForThirdElement, optionsForFourthElement))
-        Assert.assertEquals(allPossibleSentencesExpected, allPossibleSentencesActual)
+        assertEquals(allPossibleSentencesExpected, allPossibleSentencesActual)
     }
 
     @Test
@@ -76,6 +76,6 @@ internal class ListUtilsTest {
             listOf("The ", "hamster ", "was ", "drinking.")
         )
         val allPossibleSentencesActual = ListUtils.chooseFromEachList(listOf(optionsForFirstElement, optionsForSecondElement, optionsForThirdElement, optionsForFourthElement))
-        Assert.assertEquals(allPossibleSentencesExpected, allPossibleSentencesActual)
+        assertEquals(allPossibleSentencesExpected, allPossibleSentencesActual)
     }
 }

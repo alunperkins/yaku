@@ -134,7 +134,8 @@ internal class RomajiParserKatakanaTest {
     @Test
     fun shouldUseADashAsAnOptionForLongVowels() {
         assertListEquals(listOf( "デパート", "デパアト"), RomajiParser.getKatakanaOptionsForRomaji("depaato"))
+        assertListEquals(listOf( "デパート", "デパアト"), RomajiParser.getKatakanaOptionsForRomaji("depa'ato"))
 
-        assertListEquals(listOf("アルバイト"), RomajiParser.getKatakanaOptionsForRomaji("arubaito")) // assert that it doesn't get confused when the *first* character is a vowel
+        assertListEquals(listOf("アルバイト"), RomajiParser.getKatakanaOptionsForRomaji("arubaito")) // assert that it doesn't try to use a dash when the *first* character is a vowel
     }
 }

@@ -363,23 +363,30 @@ class JMDictHandler : DefaultHandler()/*default handler is just a template, all 
 
         val senseNo = allParts.last().toIntOrNull()
 
-        val stringParts = if (senseNo == null)
-            allParts.subList(0, allParts.size)
-        else
-            allParts.subList(0, allParts.size - 1).ifEmpty { throw Error("Unsupported format in reference") }
-
+        val stringParts = when (senseNo) {
+            null -> allParts.subList(0, allParts.size)
+            else -> allParts.subList(0, allParts.size - 1).ifEmpty { error("Unsupported format in reference") }
+        }
         val str = stringParts.joinToString(separator = referenceInBandDelimiter.toString())
+
         val kanji: String?
         val kana: String?
-        if (isKana(str)) {
-            kanji = null
-            kana = str
-        } else if (stringParts.size == 2 && !isKana(stringParts[0]) && isKana(stringParts[1])) {
-            kanji = stringParts[0]
-            kana = stringParts[1]
-        } else {
-            kanji = str
-            kana = null
+        when {
+            isKana(str) -> {
+                // str is of the form "{kana}" and may or may not contain "・" characters
+                kanji = null
+                kana = str
+            }
+            stringParts.size == 2 && !isKana(stringParts[0]) && isKana(stringParts[1]) -> {
+                // str is of the form "{kanjiContainingNoDots}・{kanaContainingNoDots}"
+                kanji = stringParts[0]
+                kana = stringParts[1]
+            }
+            else -> {
+                // str is of the form "{kanji}" and may or may not contain "・" characters
+                kanji = str
+                kana = null
+            }
         }
         if (stringParts.size > 1 && !(!isKana(stringParts[0]) && isKana(stringParts[1]))) {
             println("$_str is a keb or reb containing dots by itself")

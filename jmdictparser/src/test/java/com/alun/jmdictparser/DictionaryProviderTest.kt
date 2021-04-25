@@ -24,7 +24,7 @@ import com.alun.jmdictparser.models.DictEntryRaw
 import com.alun.jmdictparser.models.GlossRaw
 import com.alun.jmdictparser.models.SenseRaw
 import org.junit.Assert.assertEquals
-import org.junit.Assert.fail
+import org.junit.Assert.assertThrows
 import org.junit.Test
 
 internal class DictionaryProviderTest {
@@ -217,7 +217,8 @@ internal class DictionaryProviderTest {
             )
         )
 
-        val e = assertThrows { DictionaryProvider().convertToOurModelTypes(listOf(input)) }
+        val e =
+            assertThrows(RuntimeException::class.java) { DictionaryProvider().convertToOurModelTypes(listOf(input)) }
         assertEquals("Assumption broken: senses are assumed to be grouped by language", e.message)
     }
 
@@ -243,8 +244,12 @@ internal class DictionaryProviderTest {
             )
         )
 
-        val e = assertThrows { DictionaryProvider().convertToOurModelTypes(listOf(input)) }
-        assertEquals("Assumption broken: found POS info for a sense with supposedly non-pos-supported language DAN", e.message)
+        val e =
+            assertThrows(RuntimeException::class.java) { DictionaryProvider().convertToOurModelTypes(listOf(input)) }
+        assertEquals(
+            "Assumption broken: found POS info for a sense with supposedly non-pos-supported language DAN",
+            e.message
+        )
     }
 
     @Test
@@ -269,20 +274,11 @@ internal class DictionaryProviderTest {
             )
         )
 
-        val e = assertThrows { DictionaryProvider().convertToOurModelTypes(listOf(input)) }
-        assertEquals("Assumption broken: found no POS info for a sense with supposedly pos-supported language ENG", e.message)
-    }
-
-    /**
-     * don't seem to be able to get hold of "assertFailsWith" from Junit 5 for some compatibility reason
-     */
-    private fun assertThrows(fn: () -> Unit): Exception {
-        try {
-            fn()
-            fail("Expected an exception to be thrown, but nothing was thrown")
-            error("unreachable")
-        } catch (e: Exception) {
-            return e
-        }
+        val e =
+            assertThrows(RuntimeException::class.java) { DictionaryProvider().convertToOurModelTypes(listOf(input)) };
+        assertEquals(
+            "Assumption broken: found no POS info for a sense with supposedly pos-supported language ENG",
+            e.message
+        )
     }
 }

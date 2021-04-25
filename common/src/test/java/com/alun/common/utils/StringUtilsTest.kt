@@ -19,7 +19,7 @@
  */
 package com.alun.common.utils
 
-import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 internal class StringUtilsTest {
@@ -29,7 +29,7 @@ internal class StringUtilsTest {
         val delimiterRegex = "STOP "
         val expected = listOf("THERE IS A PROBLEM STOP ", "COME AT ONCE STOP ", "AWAIT YOUR REPLY")
         val actual = StringUtils.splitAfterDelimiterKeepingDelimiter(input, delimiterRegex)
-        Assert.assertEquals(expected, actual)
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -38,7 +38,7 @@ internal class StringUtilsTest {
         val delimiterRegex = "[BDW]"
         val expected = listOf("AB", "CD", "FEGHIJKLMNOPQRSTUVW", "XYZ")
         val actual = StringUtils.splitAfterDelimiterKeepingDelimiter(input, delimiterRegex)
-        Assert.assertEquals(expected, actual)
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -47,7 +47,7 @@ internal class StringUtilsTest {
         val delimiterRegex = "XX|newline"
         val expected = listOf("aXX", "aXX", "aXanewline", "aXX", "aXX", "aXa")
         val actual = StringUtils.splitAfterDelimiterKeepingDelimiter(input, delimiterRegex)
-        Assert.assertEquals(expected, actual)
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -56,7 +56,7 @@ internal class StringUtilsTest {
         val delimiterRegex = "[aeiou]"
         val expected = listOf("ni", "i", "sa", "n")
         val actual = StringUtils.splitAfterDelimiterKeepingDelimiter(input, delimiterRegex)
-        Assert.assertEquals(expected, actual)
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -65,7 +65,7 @@ internal class StringUtilsTest {
         val delimiterRegex = "[aeiou]"
         val expected = listOf("o", "ni", "i", "sa", "n")
         val actual = StringUtils.splitAfterDelimiterKeepingDelimiter(input, delimiterRegex)
-        Assert.assertEquals(expected, actual)
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -74,7 +74,7 @@ internal class StringUtilsTest {
         val delimiterRegex = "[aeiou]"
         val expected = listOf("de", "su")
         val actual = StringUtils.splitAfterDelimiterKeepingDelimiter(input, delimiterRegex)
-        Assert.assertEquals(expected, actual)
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -83,7 +83,7 @@ internal class StringUtilsTest {
         val delimiterRegex = "[aeiou]"
         val expected = listOf("xxx")
         val actual = StringUtils.splitAfterDelimiterKeepingDelimiter(input, delimiterRegex)
-        Assert.assertEquals(expected, actual)
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -92,7 +92,7 @@ internal class StringUtilsTest {
         val delimiterRegex = "[aeiou]"
         val expected = listOf<String>()
         val actual = StringUtils.splitAfterDelimiterKeepingDelimiter(input, delimiterRegex)
-        Assert.assertEquals(expected, actual)
+        assertEquals(expected, actual)
     }
 
     /**
@@ -104,6 +104,6 @@ internal class StringUtilsTest {
         val delimiterRegex = "[aeiou]"
         val expected = listOf(" o", "ni", "i", "sa", "n ha", "   u", "re", "shi", "i", " de", "su", " ")
         val actual = StringUtils.splitAfterDelimiterKeepingDelimiter(input, delimiterRegex)
-        Assert.assertEquals(expected, actual)
+        assertEquals(expected, actual)
     }
 }
