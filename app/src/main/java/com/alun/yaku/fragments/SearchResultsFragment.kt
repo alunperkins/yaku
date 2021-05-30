@@ -40,7 +40,6 @@ class SearchResultsFragment : Fragment() {
     private val searchResultsViewModel: SearchResultsViewModel by activityViewModels()
     private val entrySelectedViewModel: EntrySelectedViewModel by activityViewModels()
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -83,9 +82,11 @@ class SearchResultsFragment : Fragment() {
                     search_results.swapAdapter(resultsAdapter, true)
                 }
                 is Result.Failure -> {
-                    result.throwable.printStackTrace()
-                    search_results_status_text.text =
-                        resources.getString(R.string.error, result.throwable.localizedMessage)
+                    result.throwable.printStackTrace() // TODO remove
+                    search_results_status_text.text = resources.getString(
+                        R.string.error,
+                        result.throwable.localizedMessage
+                    ) // TODO review what is best to do, this text may not be helpful to the user
                 }
             }
         })
