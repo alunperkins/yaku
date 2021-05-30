@@ -24,20 +24,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alun.yaku.R
 import com.alun.yaku.models.WordDetail
 import com.alun.yaku.recyclerviewadapters.KanaAdapter
 import com.alun.yaku.recyclerviewadapters.KanjiAdapter
 import com.alun.yaku.recyclerviewadapters.SenseAdapter
-import com.alun.yaku.viewmodels.EntrySelectedViewModel
 import kotlinx.android.synthetic.main.fragment_word_detail.*
 
-class WordDetailFragment : Fragment() {
-    private val entrySelectedViewModel: EntrySelectedViewModel by activityViewModels()
-
+class WordDetailFragment(private val wordDetail: WordDetail) : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -63,21 +58,18 @@ class WordDetailFragment : Fragment() {
             adapter = SenseAdapter(listOf())
         }
 
-        entrySelectedViewModel.entrySelected.observe(viewLifecycleOwner, Observer { wordDetail: WordDetail? ->
-            if (wordDetail == null) return@Observer
-            val kanjis = wordDetail.dictEntry.kanjis
-            if (kanjis != null) {
-                word_detail_list_kanji.swapAdapter(KanjiAdapter(kanjis), true)
-            }
-            val kanas = wordDetail.dictEntry.kanas
-            word_detail_list_kana.swapAdapter(KanaAdapter(kanas), true)
-            val senses = wordDetail.dictEntry.senses
-            word_detail_list_senses.swapAdapter(SenseAdapter(senses), true)
-        })
+        val kanjis = wordDetail.dictEntry.kanjis
+        if (kanjis != null) {
+            word_detail_list_kanji.swapAdapter(KanjiAdapter(kanjis), true)
+        }
+        val kanas = wordDetail.dictEntry.kanas
+        word_detail_list_kana.swapAdapter(KanaAdapter(kanas), true)
+        val senses = wordDetail.dictEntry.senses
+        word_detail_list_senses.swapAdapter(SenseAdapter(senses), true)
     }
 
     companion object {
         @JvmStatic
-        fun newInstance() = WordDetailFragment() // TODO the constructor should take a WordDetail PARAMETER instead of the object OBSERVING the entrySelectedViewModel
+        fun newInstance(wordDetail: WordDetail) = WordDetailFragment(wordDetail)
     }
 }

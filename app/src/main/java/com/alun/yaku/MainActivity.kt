@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
                 supportFragmentManager
                     .beginTransaction()
                     .addToBackStack(null)
-                    .replace(R.id.activity_main_fragment_holder, WordDetailFragment.newInstance())
+                    .replace(R.id.activity_main_fragment_holder, WordDetailFragment.newInstance(wordDetail))
                     .commit()
                 // TODO conditionally put the fragment in the right of a dual-pane layout depending on if right-pane fragment holder is in the xml
             }
