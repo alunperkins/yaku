@@ -21,8 +21,14 @@ package com.alun.yaku.services
 
 import android.content.Context
 import com.alun.common.models.DictEntry
-import com.alun.common.models.Lang
+import com.alun.common.models.LuceneFields.Companion.getFieldName
+import com.alun.common.models.LuceneFields.Companion.getFieldNameEntry
+import com.alun.common.models.LuceneFields.Companion.getFieldNameKana
+import com.alun.common.models.LuceneFields.Companion.getFieldNameKanji
+import com.alun.common.utils.AlphabetDetector
+import com.alun.yaku.models.SearchMode
 import com.alun.yaku.models.SearchParams
+import com.alun.yaku.models.SearchTarget
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
@@ -37,32 +43,46 @@ import org.apache.lucene.store.Directory
 import org.apache.lucene.store.FSDirectory
 
 class SearchServiceImplLucene(context: Context?) : SearchService {
-    private val searcher = context?.let { IndexSearcher(DirectoryReader.open(getDirectory(it))) } // TODO handle org.apache.lucene.index.IndexNotFoundException
+    // TODO handle org.apache.lucene.index.IndexNotFoundException
+    private val searcher = context?.let { IndexSearcher(DirectoryReader.open(getDirectory(it))) }
+
     private val json = Json(JsonConfiguration.Stable)
     private val serializer = DictEntry.serializer()
 
-//            context?.getExternalFilesDir(null) // /storage/emulated/0/Android/data/com.alun.yaku/files
-//            context?.getExternalFilesDir("myString") // /storage/emulated/0/Android/data/com.alun.yaku/files/myString
-//            context?.obbDir // /storage/emulated/0/Android/obb/com.alun.yaku
-
     override suspend fun getResults(params: SearchParams): List<DictEntry> {
         return withContext(Dispatchers.IO) {
-            val t1 = System.currentTimeMillis()
             if (searcher == null) TODO("handle case where searcher is null because context was null")
+            when (params.searchTarget) {
+                SearchTarget.WORDS -> {
+                    val targetFieldName = when (params.searchMode) {
+                        SearchMode.FROM_ENGLISH -> getFieldName(params.lang)
+                        SearchMode.FROM_JAPANESE -> {
+                            if (AlphabetDetector.isKana(params.text)) getFieldNameKana()
+                            else getFieldNameKanji()
+                        }
+                        SearchMode.FROM_JAPANESE_DEINFLECTED -> TODO("Deinflection not implemented")
+                    }
 
-            val q: Query = TermQuery(Term(Lang.ENG.threeLetterCode, params.text)) // TODO search the actual requested search
-            val docs: TopDocs = searcher.search(q, 30)
-            val hits = docs.scoreDocs
-            // in one line e.g. `searcher.search(TermQuery(Term(Lang.ENG.threeLetterCode, "computer")), 10).scoreDocs.size`
+                    val q: Query = TermQuery(Term(targetFieldName, params.text))
+                    val docs: TopDocs = searcher.search(q, 30)
+                    val hits = docs.scoreDocs
 
-            val retval = hits.map { hit ->
-                val doc = searcher.doc(hit.doc)
-                val serialized = doc.getField("entry").stringValue()
-                val deserialized = json.parse(serializer, serialized)
-                deserialized
+                    hits.map { hit ->
+                        val doc = searcher.doc(hit.doc)
+                        val serialized = doc.getField(getFieldNameEntry()).stringValue()
+
+                        /*
+                        TODO
+                          this could throw if the code's data format is different
+                          between the one in the app and the one used to generate the index
+                        */
+                        val deserialized = json.parse(serializer, serialized)
+
+                        deserialized
+                    }
+                }
+                SearchTarget.EXAMPLES -> TODO("Searching examples not implemented")
             }
-            println("==== SearchServiceImplLucene::getResults::withContext Searched in " + (System.currentTimeMillis() - t1) + " wall clock milliseconds")
-            retval
         }
     }
 
