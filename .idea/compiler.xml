@@ -5,7 +5,7 @@
       <module name="common" target="1.7" />
       <module name="indexcreator" target="1.7" />
       <module name="jmdictparser" target="1.7" />
-      <module name="Yaku.app" target="1.8" />
+      <module name="Yaku.app" target="11" />
       <module name="Yaku.indexcreator" target="1.8" />
       <module name="Yaku.jmdictparser" target="1.8" />
     </bytecodeTargetLevel>
