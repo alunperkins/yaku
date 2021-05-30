@@ -19,6 +19,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0"
     implementation "org.apache.lucene:lucene-core:4.7.2"
     implementation "org.apache.lucene:lucene-analyzers-common:4.7.2"
+    implementation "org.apache.lucene:lucene-analyzers-kuromoji:4.7.2"
 }
 
 sourceCompatibility = "1.8"

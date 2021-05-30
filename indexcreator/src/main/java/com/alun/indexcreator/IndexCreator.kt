@@ -20,14 +20,27 @@
 package com.alun.indexcreator
 
 import com.alun.common.models.DictEntry
+import com.alun.common.models.Lang
+import com.alun.common.models.LuceneFields.Companion.getFieldName
+import com.alun.common.models.LuceneFields.Companion.getFieldNameEntry
+import com.alun.common.models.LuceneFields.Companion.getFieldNameKana
+import com.alun.common.models.LuceneFields.Companion.getFieldNameKanji
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
+import org.apache.lucene.analysis.Analyzer
+import org.apache.lucene.analysis.ja.JapaneseAnalyzer
+import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper
 import org.apache.lucene.analysis.standard.StandardAnalyzer
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute
 import org.apache.lucene.document.Document
 import org.apache.lucene.document.Field
 import org.apache.lucene.document.TextField
-import org.apache.lucene.index.IndexWriter
-import org.apache.lucene.index.IndexWriterConfig
+import org.apache.lucene.index.*
+import org.apache.lucene.search.IndexSearcher
+import org.apache.lucene.search.Query
+import org.apache.lucene.search.TermQuery
+import org.apache.lucene.search.TopDocs
+import org.apache.lucene.store.Directory
 import org.apache.lucene.store.MMapDirectory
 import org.apache.lucene.util.Version
 import java.io.File
@@ -35,7 +48,13 @@ import java.io.File
 class IndexCreator {
     fun run(entries: List<DictEntry>, outputPath: String) {
         val dir = MMapDirectory(File(outputPath));
-        val analyzer = StandardAnalyzer(Version.LUCENE_47);
+        val analyzer = PerFieldAnalyzerWrapper(
+            StandardAnalyzer(Version.LUCENE_47),
+            mapOf(
+                getFieldNameKana() to JapaneseAnalyzer(Version.LUCENE_47),
+                getFieldNameKanji() to JapaneseAnalyzer(Version.LUCENE_47)
+            )
+        )
 
         val indexWriterConfig = IndexWriterConfig(Version.LUCENE_47, analyzer)
         val writer = IndexWriter(dir, indexWriterConfig)
@@ -45,17 +64,17 @@ class IndexCreator {
         entries.forEach { entry ->
             val document = Document()
             entry.kanas.forEach { kana ->
-                document.add(TextField("kana", kana.str, Field.Store.NO))
+                document.add(TextField(getFieldNameKana(), kana.str, Field.Store.NO))
             }
-            entry.kanjis?.forEach { kana ->
-                document.add(TextField("kanji", kana.str, Field.Store.NO))
+            entry.kanjis?.forEach { kanji ->
+                document.add(TextField(getFieldNameKanji(), kanji.str, Field.Store.NO))
             }
             entry.senses.forEach { sense ->
                 sense.glosses.forEach { gloss ->
-                    document.add(TextField(sense.lang.threeLetterCode, gloss.str, Field.Store.NO))
+                    document.add(TextField(getFieldName(sense.lang), gloss.str, Field.Store.NO))
                 }
             }
-            document.add(TextField("entry", json.stringify(serializer, entry), Field.Store.YES))
+            document.add(TextField(getFieldNameEntry(), json.stringify(serializer, entry), Field.Store.YES))
             writer.addDocument(document)
         }
 
