@@ -25,18 +25,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alun.common.models.DictEntry
 import com.alun.common.models.Lang
-import com.alun.yaku.services.SearchService
-import com.alun.yaku.services.SearchServiceImplLucene
 import com.alun.yaku.models.Result
 import com.alun.yaku.models.SearchParams
 import com.alun.yaku.models.SearchResults
+import com.alun.yaku.services.SearchService
+import com.alun.yaku.services.SearchServiceImplLucene
 import kotlinx.coroutines.launch
 
 class SearchResultsViewModel() : ViewModel() {
     val executedSearch = MutableLiveData<SearchParams?>(null)
-    val results = MutableLiveData<SearchResults?>(null)
-
-    private val targetLang = Lang.ENG // TODO use user-selected language, do not hard-code to English
+    val results = MutableLiveData<SearchResults?>(null) // TODO can it be made non-nullable?
 
     /**
      * gets search results, filtering to the target lang only
@@ -46,7 +44,9 @@ class SearchResultsViewModel() : ViewModel() {
         val searchService: SearchService = SearchServiceImplLucene(context)
         viewModelScope.launch {
             val searchResult = try {
-                val matchesForUsersLanguage = searchInTargetLang(searchService, params)
+                val matchesForUsersLanguage = searchService.getResults(params)
+                    .map { discardSensesInOtherLangs(it, params.lang) }
+                    .filter { entry -> entry.senses.isNotEmpty() }
                 Result.Success(matchesForUsersLanguage)
             } catch (throwable: Throwable) {
                 Result.Failure(throwable)
@@ -56,17 +56,13 @@ class SearchResultsViewModel() : ViewModel() {
 
     }
 
-    private suspend fun searchInTargetLang(
-        searchService: SearchService,
-        params: SearchParams
-    ): List<DictEntry> {
-        val matches = searchService.getResults(params)
-        val matchesTrimmedToTargetLang = matches
-            .map { entry ->
-                val senses = entry.senses.filter { it.lang == targetLang }
-                DictEntry(entry.id, entry.kanjis, entry.kanas, senses)
-            }
-            .filter { entry -> entry.senses.isNotEmpty() }
-        return matchesTrimmedToTargetLang
+
+    private fun discardSensesInOtherLangs(entry: DictEntry, lang: Lang): DictEntry { // TODO consider moving to utils
+        return DictEntry(
+            entry.id,
+            entry.kanjis,
+            entry.kanas,
+            entry.senses.filter { it.lang == lang }
+        )
     }
 }

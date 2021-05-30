@@ -44,7 +44,7 @@ class ListUtils {
         fun <T> chooseFromEachList(listOfOptionsForEachListPosition: List<List<T>>): List<List<T>> {
             if (listOfOptionsForEachListPosition.isEmpty()) return listOf()
             val firstElement: List<T> = listOfOptionsForEachListPosition[0]
-            if (firstElement.isEmpty()) error("Invalid input - there are no possibilities for one of the positions")
+            if (firstElement.isEmpty()) error("Invalid input - there are no possibilities for one of the positions") // TODO throw custom exception that can be caught specifically
             val subsequentElements: List<List<T>> = listOfOptionsForEachListPosition.subList(1, listOfOptionsForEachListPosition.size)
             if (subsequentElements.isEmpty()) return firstElement.map { listOf(it) }
             val allOptionsForTheSubsequentElements: List<List<T>> = chooseFromEachList(subsequentElements) // recursion!
