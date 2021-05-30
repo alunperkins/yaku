@@ -25,8 +25,9 @@ import org.junit.Test
 internal class ListUtilsTest {
     @Test
     fun shouldReturnEmptyListForEmptyList() {
+        val input = listOf<List<String>>()
         val expected = listOf<List<String>>()
-        val actual = ListUtils.chooseFromEachList(listOf<List<String>>())
+        val actual = ListUtils.chooseFromEachList(input)
         assertEquals(expected, actual)
     }
 
@@ -38,7 +39,8 @@ internal class ListUtilsTest {
             listOf("Hi."),
             listOf("Morning.")
         )
-        val actual = ListUtils.chooseFromEachList(listOf(optionsForFirstElement))
+        val input = listOf(optionsForFirstElement)
+        val actual = ListUtils.chooseFromEachList(input)
         assertEquals(expected, actual)
     }
 
@@ -48,10 +50,17 @@ internal class ListUtilsTest {
         val optionsForSecondElement = listOf("cat ")
         val optionsForThirdElement = listOf("was ")
         val optionsForFourthElement = listOf("eating.")
+        val input =
+            listOf(
+                optionsForFirstElement,
+                optionsForSecondElement,
+                optionsForThirdElement,
+                optionsForFourthElement
+            )
         val allPossibleSentencesExpected = listOf(
             listOf("A ", "cat ", "was ", "eating.")
         )
-        val allPossibleSentencesActual = ListUtils.chooseFromEachList(listOf(optionsForFirstElement, optionsForSecondElement, optionsForThirdElement, optionsForFourthElement))
+        val allPossibleSentencesActual = ListUtils.chooseFromEachList(input)
         assertEquals(allPossibleSentencesExpected, allPossibleSentencesActual)
     }
 
@@ -61,6 +70,12 @@ internal class ListUtilsTest {
         val optionsForSecondElement = listOf("cat ", "dog ", "hamster ")
         val optionsForThirdElement = listOf("was ")
         val optionsForFourthElement = listOf("eating.", "drinking.")
+        val input = listOf(
+            optionsForFirstElement,
+            optionsForSecondElement,
+            optionsForThirdElement,
+            optionsForFourthElement
+        )
         val allPossibleSentencesExpected = listOf(
             listOf("A ", "cat ", "was ", "eating."),
             listOf("A ", "cat ", "was ", "drinking."),
@@ -75,7 +90,7 @@ internal class ListUtilsTest {
             listOf("The ", "hamster ", "was ", "eating."),
             listOf("The ", "hamster ", "was ", "drinking.")
         )
-        val allPossibleSentencesActual = ListUtils.chooseFromEachList(listOf(optionsForFirstElement, optionsForSecondElement, optionsForThirdElement, optionsForFourthElement))
+        val allPossibleSentencesActual = ListUtils.chooseFromEachList(input)
         assertEquals(allPossibleSentencesExpected, allPossibleSentencesActual)
     }
 }
